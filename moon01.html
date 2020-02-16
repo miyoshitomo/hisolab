@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<title>月と博士</title>
+</head>
+<body>
+	<input type="button" id="btnStart" value="開始" onclick="setup(); status='start';"/>
+	<input type="button" id="btnStart" value="停止" onclick="status='wait';"/>
+	月齢：<input type="text" id="dayofmoon" size="5">
+	<input type="button" id="btnDisplay" value="表示" onclick="setMoonAge();"/>
+	<br/>
+	<canvas width="600" height="600" id="pbCanvas" style="background-color:black;"></canvas>
+<br/><a href="./index.html">→</a>
+<script type="text/javascript">
+<!--
+var status='wait';
+var jogenFlg,leftFlg;
+var shadow,moon;
+
+var mooncolor = "yellow";
+var skycolor = "black";
+var speed = 3;
+
+function setup(){
+	intervalId = setInterval(setMoon, 200);
+	moon = {x:screenWidth/2, 
+			 y:screenHeight/2,
+			 size: 100};
+	shadow = {x:moon.x, 
+			 y:moon.y,
+			 size:moon.size,
+			 color:skycolor};
+	leftFlg = true;
+	jogenFlg = true;
+}
+function setMoon() {
+	if (status=='wait'){
+		clearInterval(intervalId);
+		return;
+	}
+
+	pbCtx.clearRect(0, 0, screenWidth, screenHeight);
+	
+	drawMoon(jogenFlg);
+	if (leftFlg){
+		if (moon.x + speed >= shadow.x + shadow.size){
+			shadow.x = moon.x + (moon.x-shadow.x);
+			if (shadow.color == skycolor){
+				shadow.color = mooncolor;
+			} else {
+				shadow.color = skycolor;
+			}
+			leftFlg = false;
+		}
+	} else {
+		if (moon.x >= shadow.x){
+			leftFlg = true;
+			jogenFlg = !jogenFlg;
+		}
+	}
+}
+function drawMoon(isJogen) {
+	if (shadow.color == skycolor){
+		//月
+		halfmoon(isJogen);
+		//弦
+		drawGen();
+	} else {
+		//弦
+		drawGen();
+		//半面を黒く
+		if (isJogen){
+			pbCtx.clearRect(screenWidth/2, 0, screenWidth, screenHeight);
+		} else {
+			pbCtx.clearRect(0, 0, screenWidth/2, screenHeight);
+		}
+		//月
+		halfmoon(isJogen);
+	}
+	//影位置計算
+	calcShadow();
+}
+//半月を描く
+function halfmoon(isJogen){
+	pbCtx.fillStyle = mooncolor;
+	pbCtx.beginPath();
+	if (isJogen){
+		pbCtx.arc(moon.x, moon.y, moon.size, Math.PI/2*3, Math.PI/2	, false);
+	} else {
+		pbCtx.arc(moon.x, moon.y, moon.size, Math.PI/2*3, Math.PI/2	, true);
+	}
+	pbCtx.closePath();
+	pbCtx.fill();
+}
+//弦を描く
+function drawGen(){
+	pbCtx.fillStyle = shadow.color;
+	pbCtx.beginPath();
+	pbCtx.arc(shadow.x, shadow.y, shadow.size, 0, 2*Math.PI , false);
+	pbCtx.fill();
+}
+//影の半径と位置の計算
+function calcShadow(){
+	var px,ap,shadowedge;
+
+	//月齢
+	shadowedge = shadow.x + ((moon.x >= shadow.x)?shadow.size:shadow.size*-1);
+	//影の右端と月の右端の距離を影の直径で割って0～1を算出、15をかける。下弦の場合、15を加算。
+	document.getElementById("dayofmoon").value = 
+		Math.abs(Math.floor((moon.x + moon.size - shadowedge) / (moon.size*2)*15 * 10)/10)
+		+ (jogenFlg?0:15);
+		//光の量
+		//Math.abs(Math.floor((moon.x + (jogenFlg?moon.size:moon.size*-1) - shadowedge) / (moon.size*2)*15))
+		//Math.abs(moon.x - px);
+
+	if (shadow.x >= moon.x){
+		//影が月より右側にある場合、影の左側が月に被る（shadow.x-shadow.size）
+		//moon.ｙ上に影がかかる位置を1コマ分左に移す（- speed）
+		px = shadow.x-shadow.size - speed;
+		setShadowSize(px);
+		shadow.x = px + shadow.size;
+	} else {
+		//影が月より右側にある場合、影の右側が月に被る（shadow.x+shadow.size）
+		px = shadow.x+shadow.size - speed;
+		setShadowSize(px);
+		shadow.x = px - shadow.size;
+	}
+}
+function setShadowSize(px){
+		//半円の終わりの点A（moon.x,moon.y-moon.size)と点P(px,moon.y)の距離を求める
+		ap = Math.sqrt(Math.pow(moon.size,2) + Math.pow(moon.x-px,2));
+		//影の半径を求める
+		//影の中心Qは点Aと点Pから等距離にあり、かつmoon.y上にある
+		//APQはAPを底辺とする二等辺三角形
+		//QからAPに向けて垂線を引き、交点を点Bとする。→AB=AP/2
+		//月の中心を点M(moon.x,moon.y)とすると、
+		//ABQとAMPは3つの角が同じなので相似関係
+		//AQ:AP=AB:AM → AQ=AP*AB/AM → AQ = ap*ap/2/(moon.x-px)
+		shadow.size = Math.abs(Math.pow(ap,2)/(2*(moon.x-px)));
+}
+function setMoonAge(){
+	var moonage = document.getElementById("dayofmoon").value;
+	if (isNaN(moonage) || moonage < 0 || moonage > 30){
+		return;
+	}
+	setup();
+	
+	if (moonage==0 || moonage==30){
+	} else if (moonage==7.5){
+		halfmoon(true);
+	} else if (moonage==15){
+		halfmoon(true);
+		halfmoon(false);
+	} else if (moonage==22.5){
+		halfmoon(false);
+	} else {
+		jogenFlg = (moonage<15);
+		leftFlg = (moonage > 7.5 && moonage < 22.5);
+		shadow.color = leftFlg?mooncolor:skycolor;
+
+		var px = moon.x + moon.size - ((moonage % 15) / 15 * moon.size * 2); 
+		setShadowSize(px);
+		if (px > moon.x){
+			shadow.x = px - shadow.size;
+		} else {
+			shadow.x = px + shadow.size;
+		}
+		status='start';
+		setMoon();
+	}
+	status='wait';
+}
+
+var pbCanvas,pbCtx,screenWidth,screenHeight,intervalId;
+onload = function() {
+	//描画コンテキストの取得
+	pbCanvas = document.getElementById('pbCanvas');
+	if (!pbCanvas.getContext) return false;
+	pbCtx = pbCanvas.getContext('2d');
+
+	screenWidth = pbCanvas.width;
+	screenHeight = pbCanvas.height;
+};
+
+//-->
+</script>
+</body>
+</html>
+
