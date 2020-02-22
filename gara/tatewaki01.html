@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<title>立涌その１</title>
+</head>
+<body>
+	弧の大きさ：<input type="text" size="3" value="10" id="arcsize">
+	線の太さ：<input type="text" size="2" value="3" id="arcline"><br/>
+	線の色：<input type="text" size="20" value="mintcream" id="arccolor">
+	地色：<input type="text" size="20" value="royalblue" id="groundcolor">
+	<input type="button" id="btnStart" value="開始" onclick="setup();">
+	<input type="button" id="btnStart" value="停止" onclick="status='wait';">
+		→<a href="../common/colorpicker.html" target="wincolorpicker">色見本</a>
+	<br/>
+	<canvas width="600" height="600" id="pbCanvas" style="background-color:white;"></canvas>
+<br/><a href="../index.html">→</a>
+<script type="text/javascript">
+<!--
+var status='wait';
+var px,py;
+
+//円の半径
+var r = 10;
+//弧の高さ（45度）の割合
+var c_sin = Math.sin(45 /180 * Math.PI);
+//波が右向きから始まる場合、true。左向きから始まる場合false。
+var waveflg = true;
+
+function setup(){
+	clearInterval(intervalId);
+	if (!init()) return;
+	intervalId = setInterval(loop, 100);
+	status='start';
+
+	r = parseInt(document.getElementById('arcsize').value);
+	px = r;
+	waveflg = true;
+
+	//地の設定
+	pbCtx.fillStyle = document.getElementById('groundcolor').value;
+	pbCtx.fillRect(0, 0, screenWidth, screenHeight);
+
+	//線の設定
+	pbCtx.strokeStyle = document.getElementById('arccolor').value;
+	pbCtx.lineWidth = document.getElementById('arcline').value;
+}
+
+function loop() {
+	if (status=='wait'){
+		clearInterval(intervalId);
+		return;
+	}
+	
+	if (px>=screenWidth){
+		status='wait';
+		return;
+	}
+
+	//波の左右始まりの設定
+	var bez = r/2 *(waveflg?1:-1);
+	//開始位置は上端
+	var y = r;
+
+    pbCtx.beginPath();
+    pbCtx.moveTo(px,y - (r * c_sin));
+	while (y<=screenHeight){
+		pbCtx.bezierCurveTo(px+bez,y-(r/3),px+bez,y+(r/3),px,y + (r * c_sin));
+		y = y + (r * 1.5);
+		pbCtx.bezierCurveTo(px-bez,y-(r/3),px-bez,y+(r/3),px,y + (r * c_sin));
+		y = y + (r * 1.5);
+	}
+    pbCtx.stroke();
+
+	//カウントアップとフラグ切り替え
+    px += r*2; 
+    waveflg = !waveflg;
+}
+
+var pbCanvas,pbCtx,screenWidth,screenHeight,intervalId;
+function init() {
+	//描画コンテキストの取得
+	pbCanvas = document.getElementById('pbCanvas');
+	if (!pbCanvas.getContext) return false;
+	pbCtx = pbCanvas.getContext('2d');
+
+	screenWidth = pbCanvas.width;
+	screenHeight = pbCanvas.height;
+	return true;
+}
+//-->
+</script>
+</body>
+</html>
+

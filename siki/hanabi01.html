@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		<meta charset="utf-8">
+		<title>打上花火</title>
+		<meta name="viewport" content="width=768, height=2000, user-scalable=no"/>
+	</head>
+	<body>
+		色１：<input type="text" size="20" value="blue" id="color1"/>
+		色２：<input type="text" size="20" value="aqua"    id="color2"/>
+		色３：<input type="text" size="20" value="white"  id="color3"/>
+		<input type="button" id="btnStart" value="開始" onclick="setup();"/>
+		<input type="button" id="btnStart" value="停止" onclick="status='wait';"/>
+		→<a href="../common/colorpicker.html" target="wincolorpicker">色見本</a><br/>
+		<canvas id="pbCanvas" width="600" height="600" style="background-color:#000066"></canvas>
+	<br/><a href="../index.html">→</a>
+<script>
+var pt;	//動く点（配列）
+var ptFillStyle;
+var speed = 2;
+var dotlevel = 6;	//円の数
+var dotcount = 20;	//１円ごとの点の数
+var dotdef = 0.5;	//円の間隔
+var eraseSpeed = 0.9;
+
+var status='wait';
+
+var r = 10;
+
+function setup(){
+	clearInterval(intervalId);
+	if (!init()) return;
+	intervalId = setInterval(loop, 100);
+
+	status='start';
+
+	var cnt=0;
+	pt = new Array();
+	for (var j = 0;j<dotlevel;j++){
+		var ptFillStyle = document.getElementById('color3').value;
+		if (j%3 == 0){
+			ptFillStyle = document.getElementById('color1').value;
+		} else if (j%3 == 1){
+			ptFillStyle = document.getElementById('color2').value;
+		}
+
+		for (var i = 0;i<dotcount;i++){
+			pt[cnt] = {
+				'x' :screenWidth/2,
+				'y' :screenHeight /2,
+				'color' : ptFillStyle,
+				'kakudo': i/dotcount*2 * Math.PI,
+				'level' : j+1};
+			cnt++;
+		}
+	}
+}
+function loop(){
+	if (status != 'start'){
+		clearInterval(intervalId);
+		return;
+	}
+
+	pbCtx.clearRect(0, 0, screenWidth, screenHeight);
+	//位置判定
+	//加速
+	for (var cnt = 0;cnt<pt.length;cnt++){
+		pt[cnt].x += speed * Math.cos(pt[cnt].kakudo) * pt[cnt].level * dotdef;
+		pt[cnt].y += speed * Math.sin(pt[cnt].kakudo) * pt[cnt].level * dotdef;
+
+		pbCtx.fillStyle = pt[cnt].color;
+		pbCtx.beginPath();
+		pbCtx.arc(pt[cnt].x, pt[cnt].y, 6, 0, Math.PI*2, true);
+		pbCtx.fill();
+	}
+}
+
+var pbCanvas,pbCtx,screenWidth,screenHeight,intervalId;
+function init() {
+	//描画コンテキストの取得
+	pbCanvas = document.getElementById('pbCanvas');
+	if (!pbCanvas.getContext) return false;
+	pbCtx = pbCanvas.getContext('2d');
+
+	screenWidth = pbCanvas.width;
+	screenHeight = pbCanvas.height;
+	return true;
+}
+</script>
+	</body>
+</html>

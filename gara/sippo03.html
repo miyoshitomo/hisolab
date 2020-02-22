@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<title>七宝その３</title>
+</head>
+<body>
+	円の大きさ：<input type="text" size="3" value="10" id="arcsize">
+	線の太さ：<input type="text" size="2" value="1" id="arcline"><br/>
+	円の色：<input type="text" size="20" value="red" id="arccolor">
+	地色：<input type="text" size="20" value="white" id="groundcolor">
+	<input type="button" id="btnStart" value="開始" onclick="setup();">
+	<input type="button" id="btnStart" value="停止" onclick="status='wait';">
+		→<a href="../common/colorpicker.html" target="wincolorpicker">色見本</a>
+	<br/>
+	<canvas width="600" height="600" id="pbCanvas" style="background-color:white;"></canvas>
+<br/><a href="../index.html">→</a>
+<!--中央始まり、塗りつぶしなし-->
+<script type="text/javascript">
+<!--
+var status='wait';
+var x1,y1,x2,y2;
+
+var r = 10;
+
+function setup(){
+	clearInterval(intervalId);
+	if (!init()) return;
+	intervalId = setInterval(setSippo, 500);
+	status='start';
+
+	//円の半径と開始位置指定
+	r = document.getElementById('arcsize').value;
+	x1 = screenWidth/2 - r*0.75;
+	x2 = screenWidth/2 + r*0.75;
+	y1 = screenHeight/2 - r*0.75;
+	y2 = screenHeight/2 + r*0.75;
+
+	//地の塗りつぶし
+	pbCtx.fillStyle = document.getElementById('groundcolor').value;
+	pbCtx.fillRect(0, 0, screenWidth, screenHeight);
+
+	//線指定
+	pbCtx.strokeStyle = document.getElementById('arccolor').value;
+	pbCtx.lineWidth = document.getElementById('arcline').value;
+}
+function setSippo() {
+	if (status=='wait'){
+		clearInterval(intervalId);
+		return;
+	}
+	
+	if (y2 > screenHeight){
+		status='wait';
+		return;
+	}
+
+	//上下の縁に沿った円
+	for(x = x1;x<=x2;x = x + (r * 1.5)){
+		drawSpin(x, y1);
+		drawSpin(x, y2);
+	}
+
+	//左右の縁に沿った円
+	for(y = y1 + (r * 1.5);y < y2;y = y + (r * 1.5)){
+		drawSpin(x1, y);
+		drawSpin(x2, y);
+	}
+	x1 = x1 - (r * 1.5);
+	y1 = y1 - (r * 1.5);
+
+	x2 = x2 + (r * 1.5);
+	y2 = y2 + (r * 1.5);
+}
+function drawSpin(x,y){
+	pbCtx.beginPath();
+	pbCtx.arc(x, y, r, 0, Math.PI*2, true);
+	pbCtx.stroke();
+}
+
+var pbCanvas,pbCtx,screenWidth,screenHeight,intervalId;
+function init() {
+	//描画コンテキストの取得
+	pbCanvas = document.getElementById('pbCanvas');
+	if (!pbCanvas.getContext) return false;
+	pbCtx = pbCanvas.getContext('2d');
+
+	screenWidth = pbCanvas.width;
+	screenHeight = pbCanvas.height;
+	return true;
+}
+//-->
+</script>
+</body>
+</html>
+

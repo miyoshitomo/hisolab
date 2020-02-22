@@ -5,13 +5,13 @@
 	<title>月と博士</title>
 </head>
 <body>
-	<input type="button" id="btnStart" value="開始" onclick="setup(); status='start';"/>
+	<input type="button" id="btnStart" value="開始" onclick="setup();"/>
 	<input type="button" id="btnStart" value="停止" onclick="status='wait';"/>
 	月齢：<input type="text" id="dayofmoon" size="5">
 	<input type="button" id="btnDisplay" value="表示" onclick="setMoonAge();"/>
 	<br/>
 	<canvas width="600" height="600" id="pbCanvas" style="background-color:black;"></canvas>
-<br/><a href="./index.html">→</a>
+<br/><a href="../index.html">→</a>
 <script type="text/javascript">
 <!--
 var status='wait';
@@ -23,6 +23,8 @@ var skycolor = "black";
 var speed = 3;
 
 function setup(){
+	clearInterval(intervalId);
+	if (!init()) return;
 	intervalId = setInterval(setMoon, 200);
 	moon = {x:screenWidth/2, 
 			 y:screenHeight/2,
@@ -33,6 +35,7 @@ function setup(){
 			 color:skycolor};
 	leftFlg = true;
 	jogenFlg = true;
+	status='start';
 }
 function setMoon() {
 	if (status=='wait'){
@@ -173,7 +176,7 @@ function setMoonAge(){
 }
 
 var pbCanvas,pbCtx,screenWidth,screenHeight,intervalId;
-onload = function() {
+function init() {
 	//描画コンテキストの取得
 	pbCanvas = document.getElementById('pbCanvas');
 	if (!pbCanvas.getContext) return false;
@@ -181,6 +184,7 @@ onload = function() {
 
 	screenWidth = pbCanvas.width;
 	screenHeight = pbCanvas.height;
+	return true;
 };
 
 //-->

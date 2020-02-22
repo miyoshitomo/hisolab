@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<title>色見本</title>
+<script>
+window.onload = function() {
+	var colorItems = document.querySelectorAll(".clr");
+
+	colorItems.forEach(function(colorItem) {
+		colorItem.addEventListener('click', event => selectColor(colorItem));
+	});
+}
+function selectColor(obj){
+	document.getElementById("colorname").value = obj.style.backgroundColor;
+	document.getElementById("colorname").focus();
+}
+</script>
+</head>
+<body>
+色名：<input type=text id="colorname" size=20 onfocus="this.select();">
+※カラーチップをクリックすると色名が表示されます
+
+<table id="tblColor">
+<tr><td>白系</td>
+<td class="clr" style="background-color: white">　</td>
+<td class="clr" style="background-color: snow">　</td>
+<td class="clr" style="background-color: honeydew">　</td>
+<td class="clr" style="background-color: mintcream">　</td>
+<td class="clr" style="background-color: azure">　</td>
+<td class="clr" style="background-color: aliceblue">　</td>
+<td class="clr" style="background-color: ghostwhite">　</td>
+<td class="clr" style="background-color: whitesmoke">　</td>
+<td class="clr" style="background-color: seashell">　</td>
+<td class="clr" style="background-color: beige">　</td>
+<td class="clr" style="background-color: oldlace">　</td>
+<td class="clr" style="background-color: floralwhite">　</td>
+<td class="clr" style="background-color: ivory">　</td>
+<td class="clr" style="background-color: antiquewhite">　</td>
+<td class="clr" style="background-color: linen">　</td>
+<td class="clr" style="background-color: lavenderblush">　</td>
+<td class="clr" style="background-color: mistyrose">　</td>
+</tr>
+<tr><td>黒系</td>
+<td class="clr" style="background-color: gainsboro">　</td>
+<td class="clr" style="background-color: lightgray">　</td>
+<td class="clr" style="background-color: silver">　</td>
+<td class="clr" style="background-color: darkgray">　</td>
+<td class="clr" style="background-color: gray">　</td>
+<td class="clr" style="background-color: dimgray">　</td>
+<td class="clr" style="background-color: lightslategray">　</td>
+<td class="clr" style="background-color: slategray">　</td>
+<td class="clr" style="background-color: darkslategray">　</td>
+<td class="clr" style="background-color: black">　</td>
+</tr>
+<tr><td>赤系</td>
+<td class="clr" style="background-color: pink">　</td>
+<td class="clr" style="background-color: lightpink">　</td>
+<td class="clr" style="background-color: hotpink">　</td>
+<td class="clr" style="background-color: deeppink">　</td>
+<td class="clr" style="background-color: mediumvioletred">　</td>
+<td class="clr" style="background-color: palevioletred">　</td>
+<td class="clr" style="background-color: lightcoral">　</td>
+<td class="clr" style="background-color: salmon">　</td>
+<td class="clr" style="background-color: darksalmon">　</td>
+<td class="clr" style="background-color: lightsalmon">　</td>
+<td class="clr" style="background-color: lightsalmon">　</td>
+<td class="clr" style="background-color: coral">　</td>
+<td class="clr" style="background-color: tomato">　</td>
+<td class="clr" style="background-color: crimson">　</td>
+<td class="clr" style="background-color: indianred">　</td>
+<td class="clr" style="background-color: red">　</td>
+<td class="clr" style="background-color: firebrick">　</td>
+<td class="clr" style="background-color: darkred">　</td>
+</tr>
+<tr><td>黄系</td>
+<td class="clr" style="background-color: orangered">　</td>
+<td class="clr" style="background-color: darkorange">　</td>
+<td class="clr" style="background-color: orange">　</td>
+<td class="clr" style="background-color: gold">　</td>
+<td class="clr" style="background-color: yellow">　</td>
+<td class="clr" style="background-color: lightyellow">　</td>
+<td class="clr" style="background-color: lemonchiffon">　</td>
+<td class="clr" style="background-color: lightgoldenrodyellow">　</td>
+<td class="clr" style="background-color: papayawhip">　</td>
+<td class="clr" style="background-color: moccasin">　</td>
+<td class="clr" style="background-color: peachpuff">　</td>
+<td class="clr" style="background-color: palegoldenrod">　</td>
+<td class="clr" style="background-color: khaki">　</td>
+<td class="clr" style="background-color: darkkhaki">　</td>
+</tr>
+<tr><td>緑系</td>
+<td class="clr" style="background-color: greenyellow">　</td>
+<td class="clr" style="background-color: chartreuse">　</td>
+<td class="clr" style="background-color: lawngreen">　</td>
+<td class="clr" style="background-color: lime">　</td>
+<td class="clr" style="background-color: limegreen">　</td>
+<td class="clr" style="background-color: palegreen">　</td>
+<td class="clr" style="background-color: lightgreen">　</td>
+<td class="clr" style="background-color: mediumspringgreen">　</td>
+<td class="clr" style="background-color: springgreen">　</td>
+<td class="clr" style="background-color: mediumseagreen">　</td>
+<td class="clr" style="background-color: seagreen">　</td>
+<td class="clr" style="background-color: forestgreen">　</td>
+<td class="clr" style="background-color: green">　</td>
+<td class="clr" style="background-color: darkgreen">　</td>
+<td class="clr" style="background-color: yellowgreen">　</td>
+<td class="clr" style="background-color: olivedrab">　</td>
+<td class="clr" style="background-color: olive">　</td>
+<td class="clr" style="background-color: darkolivegreen">　</td>
+<td class="clr" style="background-color: mediumaquamarine">　</td>
+<td class="clr" style="background-color: darkseagreen">　</td>
+<td class="clr" style="background-color: lightseagreen">　</td>
+<td class="clr" style="background-color: darkcyan">　</td>
+<td class="clr" style="background-color: teal">　</td>
+</tr>
+<tr><td>青系</td>
+<td class="clr" style="background-color: aqua">　</td>
+<td class="clr" style="background-color: cyan">　</td>
+<td class="clr" style="background-color: lightcyan">　</td>
+<td class="clr" style="background-color: paleturquoise">　</td>
+<td class="clr" style="background-color: aquamarine">　</td>
+<td class="clr" style="background-color: turquoise">　</td>
+<td class="clr" style="background-color: mediumturquoise">　</td>
+<td class="clr" style="background-color: darkturquoise">　</td>
+<td class="clr" style="background-color: cadetblue">　</td>
+<td class="clr" style="background-color: steelblue">　</td>
+<td class="clr" style="background-color: lightsteelblue">　</td>
+<td class="clr" style="background-color: powderblue">　</td>
+<td class="clr" style="background-color: lightblue">　</td>
+<td class="clr" style="background-color: skyblue">　</td>
+<td class="clr" style="background-color: lightskyblue">　</td>
+<td class="clr" style="background-color: deepskyblue">　</td>
+<td class="clr" style="background-color: dodgerblue">　</td>
+<td class="clr" style="background-color: cornflowerblue">　</td>
+<td class="clr" style="background-color: royalblue">　</td>
+<td class="clr" style="background-color: blue">　</td>
+<td class="clr" style="background-color: mediumblue">　</td>
+<td class="clr" style="background-color: darkblue">　</td>
+<td class="clr" style="background-color: navy">　</td>
+<td class="clr" style="background-color: midnightblue">　</td>
+</tr>
+<tr><td>紫系</td>
+<td class="clr" style="background-color: lavender">　</td>
+<td class="clr" style="background-color: thistle">　</td>
+<td class="clr" style="background-color: plum">　</td>
+<td class="clr" style="background-color: violet">　</td>
+<td class="clr" style="background-color: orchid">　</td>
+<td class="clr" style="background-color: fuchsia">　</td>
+<td class="clr" style="background-color: magenta">　</td>
+<td class="clr" style="background-color: mediumorchid">　</td>
+<td class="clr" style="background-color: mediumpurple">　</td>
+<td class="clr" style="background-color: rebeccapurple">　</td>
+<td class="clr" style="background-color: blueviolet">　</td>
+<td class="clr" style="background-color: darkviolet">　</td>
+<td class="clr" style="background-color: darkorchid">　</td>
+<td class="clr" style="background-color: darkmagenta">　</td>
+<td class="clr" style="background-color: purple">　</td>
+<td class="clr" style="background-color: indigo">　</td>
+<td class="clr" style="background-color: slateblue">　</td>
+<td class="clr" style="background-color: darkslateblue">　</td>
+<td class="clr" style="background-color: mediumslateblue">　</td>
+</tr>
+<tr><td>茶系</td>
+<td class="clr" style="background-color: cornsilk">　</td>
+<td class="clr" style="background-color: blanchedalmond">　</td>
+<td class="clr" style="background-color: bisque">　</td>
+<td class="clr" style="background-color: navajowhite">　</td>
+<td class="clr" style="background-color: wheat">　</td>
+<td class="clr" style="background-color: burlywood">　</td>
+<td class="clr" style="background-color: tan">　</td>
+<td class="clr" style="background-color: rosybrown">　</td>
+<td class="clr" style="background-color: sandybrown">　</td>
+<td class="clr" style="background-color: goldenrod">　</td>
+<td class="clr" style="background-color: darkgoldenrod">　</td>
+<td class="clr" style="background-color: peru">　</td>
+<td class="clr" style="background-color: chocolate">　</td>
+<td class="clr" style="background-color: saddlebrown">　</td>
+<td class="clr" style="background-color: sienna">　</td>
+<td class="clr" style="background-color: brown">　</td>
+<td class="clr" style="background-color: maroon">　</td>
+</tr>
+</table>
+</body>
+</html>
