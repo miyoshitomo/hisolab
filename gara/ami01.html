@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<title>網文その１</title>
+</head>
+<body>
+	模様の大きさ：<input type="text" size="3" value="24" id="arcsize">
+	線の太さ：<input type="text" size="2" value="1" id="arcline"><br/>
+	線の色：<input type="text" size="20" value="yellow" id="arccolor">
+	地色：<input type="text" size="20" value="teal" id="groundcolor">
+	<input type="button" id="btnStart" value="開始" onclick="setup();"/>
+	<input type="button" id="btnStart" value="停止" onclick="status='wait';"/>
+		→<a href="../common/colorpicker.html" target="wincolorpicker">色見本</a>
+	<br/>
+	<canvas width="480" height="480" id="pbCanvas" style="background-color:white;"></canvas>
+<br/><a href="../index.html">→</a>
+<script type="text/javascript">
+<!--
+var status='wait';
+var x,y;
+//半径
+var r = 20;
+var upflg,rowbeginflg;
+
+function setup(){
+	clearInterval(intervalId);
+	if (!init())return;
+	intervalId = setInterval(drawScreen, 100);	//1秒10コマ
+	status='start';
+
+	r = parseInt(document.getElementById('arcsize').value);
+	x = r*0.5;
+	y = 0;
+
+	//地の塗りつぶし
+	pbCtx.fillStyle = document.getElementById('groundcolor').value;
+	pbCtx.fillRect(0, 0, screenWidth, screenHeight);
+
+	//塗りつぶし指定
+	pbCtx.strokeStyle = document.getElementById('arccolor').value;
+	pbCtx.lineWidth = document.getElementById('arcline').value;
+
+	//フラグ初期化
+	rowbeginflg = true;
+	upflg = true;
+}
+function drawScreen() {
+	if (status=='wait'){
+		clearInterval(intervalId);
+		return;
+	}
+	
+	//右に向かって描き、右端についたら下の段へ
+	if (x-r >= screenWidth){
+		x = r*0.5;
+		y = y + (r * 2);
+		//奇数行は上向き半円から、偶数行は下向き半円からスタート
+		rowbeginflg = !rowbeginflg;
+		upflg = rowbeginflg;
+	}
+	if (y > screenHeight){
+		status='wait';
+		clearInterval(intervalId);
+	}
+
+	//半円を描く
+	pbCtx.beginPath();
+	pbCtx.arc(x, y, r, 0, Math.PI, upflg);
+	pbCtx.stroke();
+
+	//円位置を右にずらす
+	x = x + (r * 2);
+	upflg = !upflg;	//上向きと下向きの半円を交互に繰り返す
+}
+
+var pbCanvas,pbCtx,screenWidth,screenHeight,intervalId;
+function init() {
+	//描画コンテキストの取得
+	pbCanvas = document.getElementById('pbCanvas');
+	if (!pbCanvas.getContext) return false;
+	pbCtx = pbCanvas.getContext('2d');
+
+	screenWidth = pbCanvas.width;
+	screenHeight = pbCanvas.height;
+	return true;
+};
+//-->
+</script>
+</body>
+</html>

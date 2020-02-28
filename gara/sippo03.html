@@ -30,7 +30,7 @@ function setup(){
 	status='start';
 
 	//円の半径と開始位置指定
-	r = document.getElementById('arcsize').value;
+	r = parseInt(document.getElementById('arcsize').value);
 	x1 = screenWidth/2 - r*0.75;
 	x2 = screenWidth/2 + r*0.75;
 	y1 = screenHeight/2 - r*0.75;

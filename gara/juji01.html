@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<title>十字つなぎその１</title>
+</head>
+<body>
+	大きさ：<input type="text" size="3" value="20" id="arcsize">
+	線の太さ：<input type="text" size="2" value="3" id="arcline"><br/>
+	線の色：<input type="text" size="20" value="mintcream" id="arccolor">
+	地色：<input type="text" size="20" value="royalblue" id="groundcolor">
+	<input type="button" id="btnStart" value="開始" onclick="setup();">
+	<input type="button" id="btnStart" value="停止" onclick="status='wait';">
+		→<a href="../common/colorpicker.html" target="wincolorpicker">色見本</a>
+	<br/>
+	<canvas width="600" height="600" id="pbCanvas" style="background-color:white;"></canvas>
+<br/><a href="../index.html">→</a>
+<script type="text/javascript">
+<!--
+var status='wait';
+var px,py,ptnCnt;
+
+//模様の大きさ
+var tani = 10;
+
+function setup(){
+	clearInterval(intervalId);
+	if (!init()) return;
+	intervalId = setInterval(loop, 50);
+	status='start';
+
+	tani = parseInt(document.getElementById('arcsize').value);
+
+	//地の設定
+	pbCtx.fillStyle = document.getElementById('groundcolor').value;
+	pbCtx.fillRect(0, 0, screenWidth, screenHeight);
+
+	//線の設定
+	pbCtx.strokeStyle = document.getElementById('arccolor').value;
+	pbCtx.lineWidth = document.getElementById('arcline').value;
+	pbCtx.lineCap = "square";
+	
+	px=0;
+	py=0;
+	ptnCnt=0;
+}
+
+function loop() {
+	if (status=='wait'){
+		clearInterval(intervalId);
+		return;
+	}
+
+	//右に向かって描き、右端についたら下の段へ
+	if (px > screenWidth+tani){
+		py+=tani*5;
+		px = tani*(ptnCnt%5);
+	}
+	if (py >= screenHeight){
+		ptnCnt++;
+		switch(ptnCnt%5){
+			case 0:	py=0;
+			break;
+			case 1:	py=tani*3;
+			break;
+			case 2:	py=tani;
+			break;
+			case 3:	py=tani*4;
+			break;
+			case 4:	py=tani*2;
+			break;
+		}
+		px = tani*(ptnCnt%5);
+	}
+	if (ptnCnt > 5){
+		status='wait';
+		clearInterval(intervalId);
+	}
+
+	drawManji(px,py);
+	px+=tani*5;
+}
+function drawManji(x,y){
+	//左上、左中点、右中点を結ぶ
+	pbCtx.beginPath();
+	pbCtx.moveTo(x-tani,y-tani);
+	pbCtx.lineTo(x-tani,y);
+	pbCtx.lineTo(x+tani,y);
+	pbCtx.stroke();
+
+	//右上、上中点、下中点を結ぶ
+	pbCtx.beginPath();
+	pbCtx.moveTo(x+tani,y-tani);
+	pbCtx.lineTo(x,y-tani);
+	pbCtx.lineTo(x,y+tani);
+	pbCtx.stroke();
+}
+
+var pbCanvas,pbCtx,screenWidth,screenHeight,intervalId;
+function init() {
+	//描画コンテキストの取得
+	pbCanvas = document.getElementById('pbCanvas');
+	if (!pbCanvas.getContext) return false;
+	pbCtx = pbCanvas.getContext('2d');
+
+	screenWidth = pbCanvas.width;
+	screenHeight = pbCanvas.height;
+	return true;
+}
+//-->
+</script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<title>千鳥つなぎその２</title>
+</head>
+<body>
+	模様の大きさ：<input type="text" size="3" value="24" id="ptnsize">
+	線の太さ：<input type="text" size="2" value="1" id="ptnline"><br/>
+	線の色：<input type="text" size="20" value="lightsalmon" id="ptncolor">
+	地色：<input type="text" size="20" value="cornsilk" id="groundcolor">
+	<input type="button" id="btnStart" value="開始" onclick="setup();"/>
+	<input type="button" id="btnStart" value="停止" onclick="status='wait';"/>
+		→<a href="../common/colorpicker.html" target="wincolorpicker">色見本</a>
+	<br/>
+	<canvas width="480" height="480" id="pbCanvas" style="background-color:white;"></canvas>
+<br/><a href="../index.html">→</a>
+<!--辺の波打った正方形で描く千鳥つなぎ-->
+<script type="text/javascript">
+<!--
+var status='wait';
+var xpos,ypos,kyori;
+//半径
+var r = 20;
+var rowbeginflg,fillflg;
+
+function setup(){
+	clearInterval(intervalId);
+	if (!init())return;
+	intervalId = setInterval(drawScreen, 100);	//1秒10コマ
+	status='start';
+
+	r = parseInt(document.getElementById('ptnsize').value);
+	xpos = 0;
+	ypos = 0;
+
+	kyori = Math.sqrt(((r*0.5)**2)*2);
+
+	//地の塗りつぶし
+	pbCtx.fillStyle = document.getElementById('groundcolor').value;
+	pbCtx.fillRect(0, 0, screenWidth, screenHeight);
+
+	//塗りつぶし指定
+	pbCtx.fillStyle=document.getElementById('ptncolor').value;
+	pbCtx.strokeStyle = document.getElementById('ptncolor').value;
+	pbCtx.lineWidth = document.getElementById('ptnline').value;
+
+	//フラグ初期化
+	rowbeginflg = true;
+	fillflg = rowbeginflg;
+}
+function drawScreen() {
+	if (status=='wait'){
+		clearInterval(intervalId);
+		return;
+	}
+	
+	//右に向かって描き、右端についたら下の段へ
+	if (xpos-r >= screenWidth){
+		rowbeginflg = !rowbeginflg;
+		fillflg = true;
+		if (rowbeginflg){
+			xpos = 0;
+		} else {
+			xpos = r*-2;
+		}
+		ypos = ypos + r*2;
+	}
+	if (ypos > screenHeight){
+		status='wait';
+		clearInterval(intervalId);
+	}
+
+	var px = xpos;
+	var py = ypos;
+	
+	//四角形を描く
+	pbCtx.beginPath();
+	pbCtx.moveTo(px,py);
+
+	for (var kakudo=0;kakudo<36;kakudo+=9){
+		for (var ohFlg=-1;ohFlg<=1;ohFlg+=2){
+			pbCtx.quadraticCurveTo(
+				px+(kyori*Math.cos((kakudo+4.5*ohFlg)/18*Math.PI)),
+				py+(kyori*Math.sin((kakudo+4.5*ohFlg)/18*Math.PI)),
+				px+(r*Math.cos(kakudo/18*Math.PI)),
+				py+(r*Math.sin(kakudo/18*Math.PI)));
+			px += r*Math.cos(kakudo/18*Math.PI);
+			py += r*Math.sin(kakudo/18*Math.PI);
+		}
+	}
+	if (fillflg){
+		pbCtx.fill();
+	} else {
+		pbCtx.stroke();
+		
+		//最初の行の場合、上端から少しはみ出したカーブ部分にも色を塗る
+		if (ypos==0){
+			pbCtx.beginPath();
+			pbCtx.moveTo(xpos+r,ypos);
+			pbCtx.quadraticCurveTo(
+				xpos+r+(kyori*Math.cos(4.5/18*Math.PI)),
+				ypos+(kyori*Math.sin(4.5/18*Math.PI)),
+				xpos+r*2,
+				ypos);
+			pbCtx.closePath();
+			pbCtx.fill();
+		}
+	}
+
+	//位置を右にずらす
+	xpos += r*2;
+	fillflg = !fillflg;
+}
+
+var pbCanvas,pbCtx,screenWidth,screenHeight,intervalId;
+function init() {
+	//描画コンテキストの取得
+	pbCanvas = document.getElementById('pbCanvas');
+	if (!pbCanvas.getContext) return false;
+	pbCtx = pbCanvas.getContext('2d');
+
+	screenWidth = pbCanvas.width;
+	screenHeight = pbCanvas.height;
+	return true;
+};
+//-->
+</script>
+</body>
+</html>

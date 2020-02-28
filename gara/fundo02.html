@@ -2,10 +2,10 @@
 <html lang="ja">
 <head>
 	<meta charset="utf-8">
-	<title>分銅つなぎその１</title>
+	<title>分銅つなぎその２</title>
 </head>
 <body>
-	円の大きさ：<input type="text" size="3" value="10" id="arcsize">
+	円の大きさ：<input type="text" size="3" value="30" id="arcsize">
 	線の太さ：<input type="text" size="2" value="1" id="arcline"><br/>
 	円の色：<input type="text" size="20" value="maroon" id="arccolor">
 	地色：<input type="text" size="20" value="seashell" id="groundcolor">
@@ -15,13 +15,14 @@
 	<br/>
 	<canvas width="600" height="600" id="pbCanvas" style="background-color:white;"></canvas>
 <br/><a href="../index.html">→</a>
-<!--円の組み合わせで描く分銅つなぎ-->
+<!--正方形の辺をベジェ曲線で描く分銅つなぎ-->
 <script type="text/javascript">
 <!--
 var status='wait';
 var x1,y1,x2,y2;
 
-var r = 10;
+var ptnSize = 10;
+var ptnHalf = ptnSize*0.5;
 
 function setup(){
 	clearInterval(intervalId);
@@ -30,20 +31,21 @@ function setup(){
 	status='start';
 
 	//円の半径と開始位置指定
-	r = parseInt(document.getElementById('arcsize').value);
-	x1 = screenWidth/2 - r*0.75;
-	x2 = screenWidth/2 + r*0.75;
-	y1 = screenHeight/2 - r*0.75;
-	y2 = screenHeight/2 + r*0.75;
+	ptnSize = parseInt(document.getElementById('arcsize').value);
+	ptnHalf = ptnSize/2;
+	x1 = screenWidth/2;
+	x2 = screenWidth/2;
+	y1 = screenHeight/2-ptnSize;
+	y2 = screenHeight/2;
 
 	//地の塗りつぶし
 	pbCtx.fillStyle = document.getElementById('groundcolor').value;
 	pbCtx.fillRect(0, 0, screenWidth, screenHeight);
 
 	//線指定
-//	pbCtx.rotate(45 * Math.PI / 180);
 	pbCtx.strokeStyle = document.getElementById('arccolor').value;
 	pbCtx.lineWidth = document.getElementById('arcline').value;
+	pbCtx.lineCap = "square";
 }
 function drawScreen() {
 	if (status=='wait'){
@@ -51,42 +53,38 @@ function drawScreen() {
 		return;
 	}
 	
-	if (y2 > screenHeight + (r * 1.5)){
+	if (y2 > screenHeight + ptnSize){
 		status='wait';
 		return;
 	}
 
 	//上下の縁に沿った円
-	for(x = x1;x<=x2;x = x + (r * 3)){
+	for(x = x1;x<=x2;x = x + (ptnSize * 2)){
 		drawSpin(x, y1);
-		drawSpin(x, y2 + (r * 1.5));
+		drawSpin(x, y2 + ptnSize);
 	}
 
 	//左右の縁に沿った円
-	for(y = y1 + (r * 3);y < y2;y = y + (r * 3)){
+	for(y = y1 + (ptnSize * 2);y < y2;y = y + (ptnSize * 2)){
 		drawSpin(x1, y);
-		drawSpin(x2-(r * 1.5), y);
+		drawSpin(x2, y);
 	}
-	x1 = x1 - (r * 1.5);
-	y1 = y1 - (r * 1.5);
+	x1 = x1 - ptnSize;
+	y1 = y1 - ptnSize;
 
-	x2 = x2 + (r * 1.5);
-	y2 = y2 + (r * 1.5);
+	x2 = x2 + ptnSize;
+	y2 = y2 + ptnSize;
 }
 //分銅の形を描く
 function drawSpin(x,y){
+	//x,yを中心とした正方形の辺を、左右はへこませ、上下は出っ張らせる
 	pbCtx.beginPath();
-	//右
-	pbCtx.arc(x, y, r, Math.PI*0.25, Math.PI*1.75, true);
-	//上
-	pbCtx.arc(x, y - (r * 1.5), r, Math.PI*0.25, Math.PI*0.75, false);
-	//左
-	pbCtx.arc(x, y, r, Math.PI*1.25, Math.PI*0.75, true);
-	//下
-	pbCtx.arc(x, y + (r * 1.5), r, Math.PI*1.25, Math.PI*1.75, false);
-	pbCtx.closePath();
+	pbCtx.moveTo(x+ptnHalf,y-ptnHalf);
+	pbCtx.quadraticCurveTo(x,y,x+ptnHalf,y+ptnHalf);
+	pbCtx.quadraticCurveTo(x,y+ptnSize,x-ptnHalf,y+ptnHalf);
+	pbCtx.quadraticCurveTo(x,y,x-ptnHalf,y-ptnHalf);
+	pbCtx.quadraticCurveTo(x,y-ptnSize,x+ptnHalf,y-ptnHalf);
 	pbCtx.stroke();
-
 }
 
 var pbCanvas,pbCtx,screenWidth,screenHeight,intervalId;
@@ -104,4 +102,3 @@ function init() {
 </script>
 </body>
 </html>
-

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<title>亀甲その１</title>
+</head>
+<body>
+	模様の大きさ：<input type="text" size="3" value="24" id="ptnsize">
+	線の太さ：<input type="text" size="2" value="1" id="ptnline"><br/>
+	線の色：<input type="text" size="20" value="bisque" id="ptncolor">
+	地色：<input type="text" size="20" value="olive" id="groundcolor">
+	<input type="button" id="btnStart" value="開始" onclick="setup();"/>
+	<input type="button" id="btnStart" value="停止" onclick="status='wait';"/>
+		→<a href="../common/colorpicker.html" target="wincolorpicker">色見本</a>
+	<br/>
+	<canvas width="480" height="480" id="pbCanvas" style="background-color:white;"></canvas>
+<br/><a href="../index.html">→</a>
+<!--基本の亀甲-->
+<script type="text/javascript">
+<!--
+var status='wait';
+var x,y;
+//半径
+var r = 20;
+var c_cos30 = Math.cos(30 /180 * Math.PI);
+var rowbeginflg;
+
+function setup(){
+	clearInterval(intervalId);
+	if (!init())return;
+	intervalId = setInterval(drawScreen, 100);	//1秒10コマ
+	status='start';
+
+	r = parseInt(document.getElementById('ptnsize').value);
+	x = r*c_cos30;
+	y = r/2;
+	rowbeginflg=true;
+
+	//地の塗りつぶし
+	pbCtx.fillStyle = document.getElementById('groundcolor').value;
+	pbCtx.fillRect(0, 0, screenWidth, screenHeight);
+
+	//塗りつぶし指定
+	pbCtx.strokeStyle = document.getElementById('ptncolor').value;
+	pbCtx.lineWidth = document.getElementById('ptnline').value;
+}
+function drawScreen() {
+	if (status=='wait'){
+		clearInterval(intervalId);
+		return;
+	}
+	
+	//右に向かって描き、右端についたら下の段へ
+	if (x-r >= screenWidth){
+		rowbeginflg = !rowbeginflg;
+		if (rowbeginflg){
+			x = r * c_cos30;
+		} else {
+			x = 0;
+		}
+		y = y + (r * 1.5);
+	}
+	if (y-r > screenHeight){
+		status='wait';
+		clearInterval(intervalId);
+	}
+
+	//Y字を描く
+	for (var i=0;i<3;i++){
+		pbCtx.beginPath();
+		pbCtx.moveTo(x,y);
+		pbCtx.lineTo(
+			x+(r*Math.cos((i*12 - 3) /18 * Math.PI))*1,
+			y+(r*Math.sin((i*12 - 3) /18 * Math.PI))*1);
+		pbCtx.stroke();
+	}
+	
+	//円位置を右にずらす
+	x = x + (r * c_cos30 * 2);
+	
+	//六角形を描く場合
+	/*
+	pbCtx.beginPath();
+	pbCtx.moveTo(
+		x+(r*Math.cos(3 /18 * Math.PI)),
+		y+(r*Math.sin(3 /18 * Math.PI)));
+	for (var i=2;i<=6;i++){
+		pbCtx.lineTo(
+			x+(r*Math.cos((i*6 - 3) /18 * Math.PI)),
+			y+(r*Math.sin((i*6 - 3) /18 * Math.PI)));
+	}
+	pbCtx.closePath();
+	pbCtx.stroke();
+	*/
+}
+var pbCanvas,pbCtx,screenWidth,screenHeight,intervalId;
+function init() {
+	//描画コンテキストの取得
+	pbCanvas = document.getElementById('pbCanvas');
+	if (!pbCanvas.getContext) return false;
+	pbCtx = pbCanvas.getContext('2d');
+
+	screenWidth = pbCanvas.width;
+	screenHeight = pbCanvas.height;
+	return true;
+};
+//-->
+</script>
+</body>
+</html>

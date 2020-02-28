@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<title>毘沙門亀甲その１</title>
+</head>
+<body>
+	模様の大きさ：<input type="text" size="3" value="24" id="ptnsize">
+	線の太さ：<input type="text" size="2" value="1" id="ptnline"><br/>
+	線の色：<input type="text" size="20" value="bisque" id="ptncolor">
+	地色：<input type="text" size="20" value="saddlebrown" id="groundcolor">
+	<input type="button" id="btnStart" value="開始" onclick="setup();"/>
+	<input type="button" id="btnStart" value="停止" onclick="status='wait';"/>
+		→<a href="../common/colorpicker.html" target="wincolorpicker">色見本</a>
+	<br/>
+	<canvas width="480" height="480" id="pbCanvas" style="background-color:white;"></canvas>
+<br/><a href="../index.html">→</a>
+<script type="text/javascript">
+<!--
+var status='wait';
+var x,y;
+//半径
+var r = 20;
+var c_cos30 = Math.cos(30 /180 * Math.PI);
+var rowbeginflg;
+var ptnCnt;
+function setup(){
+	clearInterval(intervalId);
+	if (!init())return;
+	intervalId = setInterval(drawScreen, 100);	//1秒10コマ
+	status='start';
+
+	r = parseInt(document.getElementById('ptnsize').value);
+	x = 0;
+	y = r/2;
+	rowbeginflg=true;
+	ptnCnt=0;
+
+	//地の塗りつぶし
+	pbCtx.fillStyle = document.getElementById('groundcolor').value;
+	pbCtx.fillRect(0, 0, screenWidth, screenHeight);
+
+	//塗りつぶし指定
+	pbCtx.strokeStyle = document.getElementById('ptncolor').value;
+	pbCtx.lineWidth = document.getElementById('ptnline').value;
+	pbCtx.lineCap = "round";
+}
+function drawScreen() {
+	if (status=='wait'){
+		clearInterval(intervalId);
+		return;
+	}
+	
+	//右に向かって描き、右端についたら下の段へ
+	if (x-r >= screenWidth){
+		rowbeginflg = !rowbeginflg;
+		if (rowbeginflg){
+			ptnCnt=0;
+			x = 0;
+		} else {
+			ptnCnt=1;
+			x = r * c_cos30 * -1;
+		}
+		y = y + (r * 1.5);
+	}
+	if (y-r*2 > screenHeight){
+		status='wait';
+		clearInterval(intervalId);
+	}
+
+	if (ptnCnt%3!=0){
+		//Y字を描く
+		for (var i=0;i<3;i++){
+			pbCtx.beginPath();
+			pbCtx.moveTo(x,y);
+			pbCtx.lineTo(
+				x+(r*Math.cos((i*12 - 3) /18 * Math.PI)),
+				y+(r*Math.sin((i*12 - 3) /18 * Math.PI)));
+			pbCtx.stroke();
+		}
+	}
+	if (ptnCnt%3==2){
+		drawHeta(x-(r*Math.cos(Math.PI/6)),
+				 y-r*(1+Math.sin(Math.PI/6)));
+	}
+	
+	//円位置を右にずらす
+	x = x + (r * c_cos30 * 2);
+	ptnCnt++;
+}
+//文様の中に入っている逆さのY字を描く
+function drawHeta(x,y){
+	for (var i=0;i<3;i++){
+		pbCtx.beginPath();
+		pbCtx.moveTo(x,y);
+		pbCtx.lineTo(
+			x+(r*Math.cos((i*12 + 3) /18 * Math.PI)),
+			y+(r*Math.sin((i*12 + 3) /18 * Math.PI)));
+		pbCtx.stroke();
+	}
+}
+
+var pbCanvas,pbCtx,screenWidth,screenHeight,intervalId;
+function init() {
+	//描画コンテキストの取得
+	pbCanvas = document.getElementById('pbCanvas');
+	if (!pbCanvas.getContext) return false;
+	pbCtx = pbCanvas.getContext('2d');
+
+	screenWidth = pbCanvas.width;
+	screenHeight = pbCanvas.height;
+	return true;
+};
+//-->
+</script>
+</body>
+</html>
