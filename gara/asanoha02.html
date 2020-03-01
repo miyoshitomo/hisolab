@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<title>麻の葉その２</title>
+</head>
+<body>
+	模様の大きさ：<input type="text" size="3" value="16" id="arcsize">
+	線の太さ：<input type="text" size="2" value="1" id="arcline"><br/>
+	線の色：<input type="text" size="20" value="cornsilk" id="arccolor">
+	地色：<input type="text" size="20" value="darkgreen" id="groundcolor">
+	<input type="button" id="btnStart" value="開始" onclick="setup();">
+	<input type="button" id="btnStart" value="停止" onclick="status='wait';">
+		→<a href="../common/colorpicker.html" target="wincolorpicker">色見本</a>
+	<br/>
+	<canvas width="480" height="480" id="pbCanvas" style="background-color:white;"></canvas>
+<br/><a href="../index.html">→</a>
+<!--隙間なし、下から順に描画-->
+<script type="text/javascript">
+<!--
+var status='wait';
+var pt;
+var cosval;
+var leafsize;
+var loopCnt;
+
+var r = 10;
+
+function setup(){
+	clearInterval(intervalId);
+	if (!init()) return;
+	intervalId = setInterval(loop, 100);
+	status='start';
+
+	//円の半径と開始位置指定
+	r = parseInt(document.getElementById('arcsize').value);
+
+	//地の塗りつぶし
+	pbCtx.fillStyle = document.getElementById('groundcolor').value;
+	pbCtx.fillRect(0, 0, screenWidth, screenHeight);
+
+	//塗りつぶし指定
+	pbCtx.strokeStyle = document.getElementById('arccolor').value;
+	pbCtx.lineWidth = document.getElementById('arcline').value;
+
+	//縦と斜めの線を引く
+	drawStripe();
+	loopCnt=0;
+}
+function loop() {
+	if (status=='wait'){
+		clearInterval(intervalId);
+		return;
+	}
+
+	drawPattern(pt[loopCnt].x,pt[loopCnt].y);
+	loopCnt++;
+	
+	if (loopCnt >= pt.length){
+		status='wait';
+		return;
+	}
+}
+//縦と斜めの線を引き、位置配列をリセット
+function drawStripe(){
+	//葉の大きさと線の基準長
+	leafsize = r * 1.5;
+	cosval = r*0.5;
+
+	var list_x = new Array();
+	var list_y = new Array();
+
+	//垂直に線を引く
+	var x=0;
+	for (;x<=screenWidth;x+=leafsize){
+		drawLine(x,0,x,screenHeight);
+		list_x.push(x);
+	}
+	list_x.push(x);
+
+	//斜めの線を引く
+	var y=0;
+	for (;y<screenHeight;y+=leafsize){
+		list_y.push(y);
+	}
+	list_y.push(y);
+
+	//右端の高さ（幅２：高さ１の三角形）
+	var endy = screenWidth * 0.5;
+	for (y=y*-1;y<screenHeight*2;y+=leafsize){
+		//斜め下へ
+		if (y <= screenHeight){
+			drawLine(0,y,screenWidth,y+endy);
+		}
+		//斜め上へ
+		if (y >= leafsize*-1){
+			drawLine(0,y,screenWidth,y-endy);
+		}
+	}
+
+	//模様の位置を配列に格納
+	pt = new Array();
+	for (var j=list_y.length-1;j>=0;j--) {
+		for (var i in list_x) {
+			var oddFlg = (i%2==1);
+			if (oddFlg){
+				pt.push({'x':list_x[i],'y':list_y[j]+leafsize/2});
+			} else {
+				pt.push({'x':list_x[i],'y':list_y[j]});
+			}
+		}
+	}
+}
+
+function drawPattern(x,y){
+	//そろばん玉
+	pbCtx.beginPath();
+	pbCtx.moveTo(x,y);
+	pbCtx.lineTo(x+cosval,y-(leafsize/2));
+	pbCtx.lineTo(x,y-leafsize);
+	pbCtx.lineTo(x-cosval,y-(leafsize/2));
+	pbCtx.closePath();
+	pbCtx.stroke();
+
+	//玉の左右に短い線を描く
+	drawLine(x+cosval,y-(leafsize/2),x+cosval+r,y-(leafsize/2));
+	drawLine(x-cosval,y-(leafsize/2),x-cosval-r,y-(leafsize/2));
+}
+
+function drawLine(px1,py1,px2,py2){
+	pbCtx.beginPath();
+	pbCtx.moveTo(px1,py1);
+	pbCtx.lineTo(px2,py2);
+	pbCtx.stroke();
+}
+
+var pbCanvas,pbCtx,screenWidth,screenHeight,intervalId;
+function init() {
+	//描画コンテキストの取得
+	pbCanvas = document.getElementById('pbCanvas');
+	if (!pbCanvas.getContext) return false;
+	pbCtx = pbCanvas.getContext('2d');
+
+	screenWidth = pbCanvas.width;
+	screenHeight = pbCanvas.height;
+	return true;
+}
+//-->
+</script>
+</body>
+</html>

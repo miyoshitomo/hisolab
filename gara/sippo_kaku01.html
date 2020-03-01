@@ -50,8 +50,6 @@ function drawScreen() {
 	if (x-r >= screenWidth){
 		x = r;
 		y = y + (r * 2);
-		rowbeginflg = !rowbeginflg;
-		upflg = rowbeginflg;
 	}
 	if (y-r > screenHeight){
 		status='wait';
