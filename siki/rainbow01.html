@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<title>虹</title>
+</head>
+<body style="margin-left:0px;margin-top:0px;">
+	<canvas width="600" height="480" id="pbCanvas"></canvas>
+<br/><a href="../index.html">→</a>
+<script type="text/javascript">
+<!--
+setup();
+function setup(){
+	if (!init()) return;
+	
+	bgcolor = 'rgb(216,255,255)';
+
+	//スクリーン下方中央を中心とする円形グラデーション
+	//(x1,y1,r1,x2,y2,r2)
+	var gr = pbCtx.createRadialGradient(
+		screen.width/2,screen.height*0.9,screen.height,
+		screen.width/2,screen.height*0.9,screen.height*0.6);
+	gr.addColorStop(.1,bgcolor);	//空
+	gr.addColorStop(.2,'rgb(255,102,102)');	//赤
+	gr.addColorStop(.3,'rgb(255,153,102)');	//橙
+	gr.addColorStop(.37,'rgb(255,255,102)');	//黄
+	gr.addColorStop(.5,'rgb(153,255,102)');	//緑
+	gr.addColorStop(.6,'rgb(102,153,255)');	//青
+	gr.addColorStop(.7,'rgb(102,102,255)');	//紫
+	gr.addColorStop(.8,bgcolor);	//空
+
+	pbCtx.fillStyle =gr;
+	pbCtx.fillRect(0, 0,screenWidth,screenHeight);
+
+	//斜め・塗りつぶし
+	//赤橙黄緑青紫
+/*
+	var gr = pbCtx.createLinearGradient(0,0,screenWidth,screenHeight);
+	gr.addColorStop(.1,'rgb(216,255,255)');	//空
+	gr.addColorStop(.2,'rgb(255,102,102)');	//赤
+	gr.addColorStop(.3,'rgb(255,153,102)');	//橙
+	gr.addColorStop(.4,'rgb(255,255,102)');	//黄
+	gr.addColorStop(.5,'rgb(153,255,102)');	//緑
+	gr.addColorStop(.6,'rgb(102,153,255)');	//青
+	gr.addColorStop(.7,'rgb(102,102,255)');	//紫
+	gr.addColorStop(.8,'rgb(216,255,255)');	//空
+
+	pbCtx.fillStyle =gr;
+	pbCtx.fillRect(0, 0,screenWidth,screenHeight);
+*/
+}
+
+var pbCanvas,pbCtx,screenWidth,screenHeight,intervalId;
+function init() {
+	//描画コンテキストの取得
+	pbCanvas = document.getElementById('pbCanvas');
+	if (!pbCanvas.getContext) return false;
+	pbCtx = pbCanvas.getContext('2d');
+
+	pbCanvas.width = window.innerWidth;
+	pbCanvas.height = window.innerHeight - 40;
+
+	screenWidth = pbCanvas.width;
+	screenHeight = pbCanvas.height;
+	return true;
+}
+//-->
+</script>
+</body>
+</html>
+

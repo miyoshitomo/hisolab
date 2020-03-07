@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<title>五月闇</title>
+	<script src="snow01.js"></script>
+</head>
+<body style="margin-left:10px;margin-top:5px;">
+	粒の数：<input type="text" value="10" id="dropcount" size="5"/>
+	波紋の大きさ：<input type="text" value="50" id="dropsize" size="5"/>
+	<input type="button" id="btnStart" value="開始" onclick="setup();"/>
+	<input type="button" id="btnStart" value="停止" onclick="status='wait';"/><br/>
+	<canvas id="pbCanvas" width="600" height="400" style="background-color:#808080"></canvas>
+<br/><a href="../index.html">→</a>
+<script>
+var pt;
+var ripplesize,waveIntervalId,maxsize;
+
+var speed = 1;
+var dotcount = 100;
+var dotByLine = 10;
+
+var status ="wait";
+
+function setup(){
+	clearInterval(intervalId);
+//	clearInterval(waveIntervalId);
+	
+	if (!init()) return;
+	dotcount = parseInt(document.getElementById('dropcount').value);
+	speed = 3;//parseInt(document.getElementById('dropspeed').value);
+	maxsize = parseInt(document.getElementById('dropsize').value);
+	pt = new Array();
+	
+	status = 'start';
+	intervalId = setInterval(loop, 50);	//1秒20コマ
+//	waveIntervalId = setInterval(setDrop, 500);	//1秒20コマ
+
+	var gr = pbCtx.createLinearGradient(0,0,screenWidth,screenHeight);
+	gr.addColorStop(.1,'rgb(216,255,255)');	//空
+	gr.addColorStop(.2,'rgb(255,255,255)');	//白
+	gr.addColorStop(.3,'rgb(216,255,255)');	//空
+	gr.addColorStop(.4,'rgb(102,153,255)');	//青
+	gr.addColorStop(.8,'rgb(216,255,255)');	//空
+
+	pbCtx.strokeStyle =gr;
+//	pbCtx.strokeStyle = 'rgb(211,211,211)';
+	setDrop(0);
+}
+function loop(){
+	if (status != 'start'){
+		clearInterval(intervalId);
+//		clearInterval(waveIntervalId);
+		return;
+	}
+	//描画
+	var gr = pbCtx.createLinearGradient(0,0,screenWidth,screenHeight);
+	gr.addColorStop(0 ,'rgb(192,192,192)');	//空
+	gr.addColorStop(1 ,'rgb(80,80,80)');	//空
+	
+	pbCtx.fillStyle = gr;
+	pbCtx.fillRect(0, 0, screenWidth, screenHeight);
+//	pbCtx.clearRect(0, 0, screenWidth, screenHeight);
+
+	for (i = 0;i < pt.length;i++){
+		if (pt[i].size > maxsize){
+			setDrop(i);
+		}
+		
+		for (j=pt[i].size;j>0;j-=30){
+			pbCtx.beginPath();
+			pbCtx.arc(pt[i].x, pt[i].y, j, 0, Math.PI*2, false);
+			pbCtx.stroke();
+		}
+
+		pt[i].size+=speed;
+	}
+	if (pt.length < dotcount-1){
+		for (i=0;i<dotcount/10;i++){
+			setDrop(pt.length);
+		}
+	}
+}
+function setDrop(aryNum){
+	if (Math.random()<0.6){
+		return;
+	}
+	pt[aryNum] = {
+		'x' :Math.random() * screenWidth,
+		'y' :Math.random() * screenHeight,
+		'size' : 0};
+}
+function brewWind(){
+	setWind(10);
+	sakuraswing();
+}
+function setWind(keisu){
+	winddir += (Math.random()-0.5)*keisu;
+	windspeed += (Math.random()-0.5);
+	if (windspeed<-1)windspeed=0;
+	if (windspeed>3)windspeed=0;
+	if (winddir>50)winddir-=5;
+	if (winddir<-50)winddir+=5;
+//	console.log(winddir);
+}
+
+//この先共通初期設定
+var pbCanvas,pbCtx,screenWidth,screenHeight,intervalId;
+
+function init() {
+	pbCanvas = document.getElementById('pbCanvas');
+	if ( ! pbCanvas || ! pbCanvas.getContext ) {
+		return false;
+	}
+	pbCtx = pbCanvas.getContext('2d');
+	screenWidth = pbCanvas.width;
+	screenHeight = pbCanvas.height;
+	return true;
+}
+</script>
+</body>
+</html>
