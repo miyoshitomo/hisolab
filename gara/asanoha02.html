@@ -7,7 +7,7 @@
 <body>
 	模様の大きさ：<input type="text" size="3" value="16" id="arcsize">
 	線の太さ：<input type="text" size="2" value="1" id="arcline"><br/>
-	線の色：<input type="text" size="20" value="cornsilk" id="arccolor">
+	線の色：<input type="text" size="20" value="ivory" id="arccolor">
 	地色：<input type="text" size="20" value="darkgreen" id="groundcolor">
 	<input type="button" id="btnStart" value="開始" onclick="setup();">
 	<input type="button" id="btnStart" value="停止" onclick="status='wait';">
@@ -15,7 +15,7 @@
 	<br/>
 	<canvas width="480" height="480" id="pbCanvas" style="background-color:white;"></canvas>
 <br/><a href="../index.html">→</a>
-<!--隙間なし、下から順に描画-->
+<!--隙間なし、下から１つおきに描画-->
 <script type="text/javascript">
 <!--
 var status='wait';
@@ -29,7 +29,7 @@ var r = 10;
 function setup(){
 	clearInterval(intervalId);
 	if (!init()) return;
-	intervalId = setInterval(loop, 100);
+	intervalId = setInterval(loop, 50);
 	status='start';
 
 	//円の半径と開始位置指定
@@ -53,10 +53,18 @@ function loop() {
 		return;
 	}
 
-	drawPattern(pt[loopCnt].x,pt[loopCnt].y);
-	loopCnt++;
-	
+	//一つ飛ばしにそろばん玉を描く
+	loopCnt=Math.floor(Math.random() * pt.length); 
+	drawPattern(pt[loopCnt].x,pt[loopCnt].y);	
+	pt.splice(loopCnt, 1);
+//	loopCnt++;
+//	console.log("" + loopCnt + "/" +pt.length);
+
 	if (loopCnt >= pt.length){
+		loopCnt=0;
+	}
+	
+	if (pt.length<=0){
 		status='wait';
 		return;
 	}

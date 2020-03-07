@@ -5,10 +5,10 @@
 	<title>麻の葉その３</title>
 </head>
 <body>
-	模様の大きさ：<input type="text" size="3" value="30" id="arcsize">
+	模様の大きさ：<input type="text" size="3" value="20" id="arcsize">
 	線の太さ：<input type="text" size="2" value="1" id="arcline"><br/>
-	線の色：<input type="text" size="20" value="darkgreen" id="arccolor">
-	地色：<input type="text" size="20" value="palegreen" id="groundcolor">
+	線の色：<input type="text" size="20" value="ivory" id="arccolor">
+	地色：<input type="text" size="20" value="coral" id="groundcolor">
 	<input type="button" id="btnStart" value="開始" onclick="setup();">
 	<input type="button" id="btnStart" value="停止" onclick="status='wait';">
 		→<a href="../common/colorpicker.html" target="wincolorpicker">色見本</a>
@@ -29,7 +29,7 @@ var r = 10;
 function setup(){
 	clearInterval(intervalId);
 	if (!init()) return;
-	intervalId = setInterval(loop, 100);
+	intervalId = setInterval(loop, 50);
 	status='start';
 
 	//円の半径と開始位置指定
@@ -42,6 +42,7 @@ function setup(){
 	//塗りつぶし指定
 	pbCtx.strokeStyle = document.getElementById('arccolor').value;
 	pbCtx.lineWidth = document.getElementById('arcline').value;
+	pbCtx.fillStyle = pbCtx.strokeStyle;
 
 	//縦と斜めの線を引く
 	drawStripe();
@@ -54,10 +55,10 @@ function loop() {
 	}
 
 	//一つ飛ばしにそろばん玉を描く
-//	loopCnt=Math.floor(Math.random() * pt.length); 
+	loopCnt=Math.floor(Math.random() * pt.length); 
 	drawPattern(pt[loopCnt].x,pt[loopCnt].y);	
 	pt.splice(loopCnt, 1);
-	loopCnt++;
+//	loopCnt++;
 //	console.log("" + loopCnt + "/" +pt.length);
 
 	if (loopCnt >= pt.length){
@@ -81,7 +82,6 @@ function drawStripe(){
 	//垂直に線を引く
 	var x=0;
 	for (;x<=screenWidth;x+=leafsize){
-		drawLine(x,0,x,screenHeight);
 		list_x.push(x);
 	}
 	list_x.push(x);
@@ -95,16 +95,6 @@ function drawStripe(){
 
 	//右端の高さ（幅２：高さ１の三角形）
 	var endy = screenWidth * 0.5;
-	for (y=y*-1;y<screenHeight*2;y+=leafsize){
-		//斜め下へ
-		if (y <= screenHeight){
-			drawLine(0,y,screenWidth,y+endy);
-		}
-		//斜め上へ
-		if (y >= leafsize*-1){
-			drawLine(0,y,screenWidth,y-endy);
-		}
-	}
 
 	//模様の位置を配列に格納
 	pt = new Array();
@@ -133,6 +123,10 @@ function drawPattern(x,y){
 	//玉の左右に短い線を描く
 	drawLine(x+cosval,y-(leafsize/2),x+cosval+r,y-(leafsize/2));
 	drawLine(x-cosval,y-(leafsize/2),x-cosval-r,y-(leafsize/2));
+
+	drawLine(x,y-leafsize,x,y);
+	drawLine(x+cosval+r,y-(leafsize/2),x,y);
+	drawLine(x-cosval-r,y-(leafsize/2),x,y);
 }
 
 function drawLine(px1,py1,px2,py2){
