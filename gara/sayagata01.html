@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<title>紗綾型その１</title>
+</head>
+<body>
+	模様の大きさ：<input type="text" size="3" value="12" id="arcsize">
+	線の太さ：<input type="text" size="2" value="1" id="arcline"><br/>
+	線の色：<input type="text" size="20" value="darkorange" id="arccolor">
+	地色：<input type="text" size="20" value="white" id="groundcolor">
+	<input type="button" id="btnStart" value="開始" onclick="setup();"/>
+	<input type="button" id="btnStart" value="停止" onclick="status='wait';"/>
+		→<a href="../common/colorpicker.html" target="wincolorpicker">色見本</a>
+	<br/>
+	<canvas width="480" height="480" id="pbCanvas" style="background-color:white;"></canvas>
+<br/><a href="../index.html">→</a>
+<!--左上始まり、塗りつぶしなし-->
+<script type="text/javascript">
+<!--
+var status='wait';
+var x,y;
+//半径
+var r = 20;
+var upflg,rowbeginflg;
+
+function setup(){
+	clearInterval(intervalId);
+	if (!init())return;
+	intervalId = setInterval(drawScreen, 100);	//1秒10コマ
+	status='start';
+
+	r = parseInt(document.getElementById('arcsize').value);
+	x = 0;
+	y = 0;
+
+	//地の塗りつぶし
+	pbCtx.fillStyle = document.getElementById('groundcolor').value;
+	pbCtx.fillRect(0, 0, screenWidth, screenHeight);
+
+	//塗りつぶし指定
+	pbCtx.strokeStyle = document.getElementById('arccolor').value;
+	pbCtx.lineWidth = document.getElementById('arcline').value;
+
+	//フラグ初期化
+	rowbeginflg = true;
+	upflg = true;
+}
+function drawScreen() {
+	if (status=='wait'){
+		clearInterval(intervalId);
+		return;
+	}
+	
+	//右に向かって描き、右端についたら下の段へ
+	if (x-r >= screenWidth){
+		rowbeginflg = !rowbeginflg;
+		x = 0;
+		y = y + (r*5);
+		upflg = rowbeginflg;
+	}
+	if (y-r*15 > screenHeight){
+		status='wait';
+		return;
+	}
+
+	drawPattern(x,y,0,upflg);
+	drawPattern(x,y-r*5, 1,!upflg);
+	drawPattern(x,y-r*10,2,upflg);
+	drawPattern(x,y-r*15,3,!upflg);
+	
+	//位置を右にずらす
+	x += r*5;
+	upflg = !upflg;
+}
+//模様の進み方定数
+var pos1 = [0,1,1,2,2];
+var pos2 = [0,0,1,1,-2.5];
+function drawPattern(px,py,stepcnt,leftflg){
+	if (px+r*5<0 || px-r*5>screenWidth ||
+		py+r*5<0 || py-r*5>screenHeight){
+		return;
+	}
+
+	//紗綾型を描く
+	var dirsign = (leftflg)?1:-1;
+
+	for (var i=-1;i<=1;i+=2){
+		var saya = r*i*dirsign;
+
+		pbCtx.beginPath();
+		pbCtx.moveTo(px+saya*pos1[stepcnt],  py+r*i*pos2[stepcnt]);
+		pbCtx.lineTo(px+saya*pos1[stepcnt+1],py+r*i*pos2[stepcnt+1]);
+		pbCtx.stroke();
+
+		pbCtx.beginPath();
+		pbCtx.moveTo(px-r*i*pos2[stepcnt],  py+saya*pos1[stepcnt]);
+		pbCtx.lineTo(px-r*i*pos2[stepcnt+1],py+saya*pos1[stepcnt+1]);
+		pbCtx.stroke();
+	}
+}
+
+var pbCanvas,pbCtx,screenWidth,screenHeight,intervalId;
+function init() {
+	//描画コンテキストの取得
+	pbCanvas = document.getElementById('pbCanvas');
+	if (!pbCanvas.getContext) return false;
+	pbCtx = pbCanvas.getContext('2d');
+
+	screenWidth = pbCanvas.width;
+	screenHeight = pbCanvas.height;
+	return true;
+};
+//-->
+</script>
+</body>
+</html>
