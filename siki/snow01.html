@@ -3,11 +3,11 @@
 <head>
 	<meta charset="utf-8">
 	<title>夜の雪</title>
-	<meta name="viewport" content="width=device-width">
+	<meta name="viewport" content="width=400">
 </head>
 <body style="margin-left:10px;margin-top:5px;">
-	粒の数：<input type="text" value="100" id="dropcount" size="5"/>
-	速さ：<input type="text" value="3" id="dropspeed" size="5"/>
+	粒の数：<input type="number" value="100" id="dropcount" size="5"/>
+	速さ：<input type="number" value="3" id="dropspeed" size="5"/>
 	<input type="button" id="btnStart" value="開始" onclick="setup();"/>
 	<input type="button" id="btnStart" value="停止" onclick="status='wait';"/><br/>
 	<canvas id="pbCanvas" width="400" height="600" style="background-color:#000033"></canvas>
