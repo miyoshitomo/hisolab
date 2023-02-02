@@ -3,62 +3,107 @@
 <head>
 	<meta charset="utf-8">
 	<title>工房</title>
+<style>
+.content-detail{
+	margin-left: 30px;
+}
+.container {
+	display: flex;
+	flex-flow :row wrap;
+}
+.container a{
+	flex-shrink:0;
+	padding:2px 10px;
+	text-align: center;
+	text-decoration: none;
+	font-weight: bold;
+}
+a{
+	color:navy;
+}
+a:visited{
+	color:teal;
+}
+a:hover{
+	background-color: lightcyan;
+}
+ul{
+	list-style-type: none;
+}
+
+</style>
 </head>
 <body>
-HTML5のcanvasにjavascriptで描いたもろもろ<br/>
+風物（canvas)
+<div class="container content-detail">
+<a href="./siki/snow01.html">夜の雪</a>
+<a href="./siki/moon01.html">月と博士</a>
+<a href="./siki/hanabi01.html">打上花火</a>
+<a href="./siki/hanabi02.html">打上花火（菊）</a>
+<a href="./siki/rainbow01.html">虹</a>
+<a href="./siki/rain01.html">五月闇</a>
+</div>
 <br/>
-
-風物
-<ul>
-<li><a href="./siki/snow01.html">夜の雪</a></li>
-<li><a href="./siki/moon01.html">月と博士</a></li>
-<li><a href="./siki/hanabi01.html">打上花火</a></li>
-<li><a href="./siki/hanabi02.html">打上花火（菊）</a></li>
-<li><a href="./siki/rainbow01.html">虹</a></li>
-<li><a href="./siki/rain01.html">五月闇</a></li>
-</ul>
-
-文様
-<div style="margin-left: 30px;">
-曲線の文様<br>
-<a href="./gara/fundo01.html">分銅つなぎ１（円）</a>　
-<a href="./gara/fundo02.html">分銅つなぎ２（正方形）</a>　
-<a href="./gara/tatewaku01.html">立涌</a>　
-<a href="./gara/ami01.html">網文</a>　
-<a href="./gara/seigaiha01.html">青海波</a>　
-<br>
-七宝<br>
-<a href="./gara/sippo01.html">七宝つなぎ１</a>　
-<a href="./gara/sippo02.html">七宝つなぎ２</a>　
-<a href="./gara/sippo03.html">七宝つなぎ３</a>　
-<a href="./gara/sippo04.html">七宝つなぎ４</a>　
-<br>
-千鳥<br>
-<a href="./gara/chidori01.html">千鳥つなぎ１（三角形）</a>　
+文様（canvas)
+<div class="content-detail">
+曲線の文様
+<div class="container">
+<a href="./gara/fundo01.html">分銅つなぎ１（円）</a>
+<a href="./gara/fundo02.html">分銅つなぎ２（正方形）</a>
+<a href="./gara/tatewaku01.html">立涌</a>
+<a href="./gara/ami01.html">網文</a>
+<a href="./gara/seigaiha01.html">青海波</a>
+</div>
+七宝
+<div class="container">
+<a href="./gara/sippo01.html">七宝つなぎ１</a>
+<a href="./gara/sippo02.html">七宝つなぎ２</a>
+<a href="./gara/sippo03.html">七宝つなぎ３</a>
+<a href="./gara/sippo04.html">七宝つなぎ４</a>
+</div>
+千鳥
+<div class="container">
+<a href="./gara/chidori01.html">千鳥つなぎ１（三角形）</a>
 <a href="./gara/chidori02.html">千鳥つなぎ２（四角形）</a>
 <a href="./gara/chidori03.html">ぱたぱた千鳥</a>
 </div>
-<br>
-<div style="margin-left: 30px;">
-直線の文様<br>
-<a href="./gara/sippo_kaku01.html">角七宝</a>　
-<a href="./gara/juji01.html">十字つなぎ</a>　
-<a href="./gara/sayagata01.html">紗綾型１</a>　
-<a href="./gara/sayagata02.html">紗綾型２</a>　
-<br>
-亀甲<br>
-<a href="./gara/kikko01.html">亀甲</a>　
-<a href="./gara/kikko_tuno01.html">角亀甲</a>　
-<a href="./gara/kikko_arare01.html">霰亀甲</a>　
-<a href="./gara/kikko_musubi01.html">結び亀甲</a>　
-<a href="./gara/kikko_bishamon01.html">毘沙門亀甲</a>　
-<br>
-麻の葉<br>
-<a href="./gara/asanoha01.html">麻の葉１</a>　
-<a href="./gara/asanoha02.html">麻の葉２</a>　
-<a href="./gara/asanoha03.html">麻の葉３</a>　
-
+直線の文様
+<div class="container">
+<a href="./gara/sippo_kaku01.html">角七宝</a>
+<a href="./gara/juji01.html">十字つなぎ</a>
+<a href="./gara/sayagata01.html">紗綾型１</a>
+<a href="./gara/sayagata02.html">紗綾型２</a>
 </div>
+亀甲
+<div class="container">
+<a href="./gara/kikko01.html">亀甲</a>
+<a href="./gara/kikko_tuno01.html">角亀甲</a>
+<a href="./gara/kikko_arare01.html">霰亀甲</a>
+<a href="./gara/kikko_musubi01.html">結び亀甲</a>
+<a href="./gara/kikko_bishamon01.html">毘沙門亀甲</a>
+</div>
+麻の葉
+<div class="container">
+<a href="./gara/asanoha01.html">麻の葉１</a>
+<a href="./gara/asanoha02.html">麻の葉２</a>
+<a href="./gara/asanoha03.html">麻の葉３</a>
+</div>
+山東京伝
+<div class="container">
+<a href="./gara/kyoden_chigo01.html">児びたい</a>
+</div>
+</div>
+
+<br/>
+クイズ（JavaScript)
+<div class="content-detail">
+<div class="container">
+<a href="./p01/q_hangeul.html">ハングル文字の読み方</a>
+<a href="./p01/q_tenji.html">点字の読み方</a>
+<a href="./p01/disp_tenji.html">簡易点訳ツール</a>
+</div>
+</div>
+
 <!--
 籠目、矢羽根
 -->

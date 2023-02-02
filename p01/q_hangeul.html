@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<title>ハングル文字クイズ</title>
+<style>
+body{
+  background-color:azure;
+}
+a {
+  color:navy;
+}
+.notion {
+  color:red;
+}
+</style>
+</head>
+<body>
+<h3>ハングル文字クイズ</h3>
+<a href="ref_hangeul.html" target="ref_hangeul">ハングル文字の読み方</a>
+<div id="d_setting">
+文字の種類を選んで、「はじめる」ボタンを押してください
+<br/>
+<p>
+文字の種類：<br/>
+<label><input type="radio" name="qtype" id="r_bin" checked>母音</input></label><br/>
+<label><input type="radio" name="qtype" id="r_sin">子音</input></label><br/>
+<label><input type="radio" name="qtype" id="r_ptm">パッチム</input></label><br/>
+<input type="button" id="btn_start" value="はじめる" onclick="showSetting(false);">
+</p>
+</div>
+
+<div id="d_quiz" style="display:none;">
+下の文字の読み方をアルファベット（小文字）で書いてください
+<div id="s_question">「」</div>
+<br/>
+読み方：<input type="text" id="t_answer" size="5">
+<input type="button" id="btn_answer" value="確定" onclick="checkAnswer();"/>
+
+<hr>
+<input type="button" id="btn_clear" value="やり直す" onclick="showSetting(true);"/><br/>
+結果：<span id="s_result"></span><br/>
+合計：<span id="s_summary"></span><br/>
+回答済一覧：<br/>
+<span id="s_resultlist"></span>
+</div>
+
+<hr>
+<a href="../index.html">目次へ</a>
+</body>
+<script src="./data/l_hangeul.txt"></script>
+<script>
+let score = 0;
+let qcnt = 0;
+let questionList;
+let rowData;
+
+function showSetting(type) {
+	if (type){
+		document.getElementById("d_setting").style.display="";
+		document.getElementById("d_quiz").style.display="none";
+	} else {
+		if (!initQuestionArea()) return;
+		document.getElementById("d_setting").style.display="none";
+		document.getElementById("d_quiz").style.display="";
+		document.getElementById("t_answer").focus();
+	}
+}
+function initQuestionArea(){
+	//問題リスト設定
+	if (document.getElementById("r_bin").checked){
+		questionList = list_bin.split('\n');
+	} else if (document.getElementById("r_sin").checked){
+		questionList = list_sin.split('\n');
+	} else if (document.getElementById("r_ptm").checked){ 
+		questionList = list_ptm.split('\n');
+	} else {
+		return false;
+	}
+	if (questionList[0]=="") questionList.splice(0,1);
+	if (questionList[questionList.length-1]=="") questionList.pop();
+
+	//スコア初期化
+	score = 0;
+	qcnt = 0;
+	showScore();
+
+	//回答済み一覧初期化
+	document.getElementById("btn_answer").disabled = false;
+	document.getElementById("s_result").innerHTML = "";
+	document.getElementById("s_resultlist").innerHTML = "";
+
+	//問題表示
+	showNewQuestion();
+	return true;
+}
+function showScore() {
+	document.getElementById("s_summary").innerHTML = qcnt + '問中' + score + "問正解";
+}
+function showNewQuestion(){
+	let recno;
+	let now = new Date();
+	let qlen = questionList.length;
+	
+	//ランダムに問題を選択
+	recno = Math.trunc(Math.random() * qlen + now.getMinutes()) % qlen;
+	rowData = questionList[recno].split(",");
+	//回答済み問題をリストから削除
+	questionList.splice(recno,1);
+
+	//問題表示＆回答欄クリア
+	document.getElementById("s_question").innerHTML = "「" + rowData[0] + "」";
+	document.getElementById("t_answer").value ="";
+	document.getElementById("t_answer").focus();
+}
+function checkAnswer() {
+	let s_resultlist = rowData[0] + "→" + rowData[1] + "（" + rowData[2] + "）</div>"
+					+ document.getElementById("s_resultlist").innerHTML;
+	let s_result = "";
+
+	if  (document.getElementById("t_answer").value == rowData[1].trim()){
+		s_result = "正解です。";
+		s_resultlist = "<div>○&nbsp;" + s_resultlist;
+		score++;
+	} else {
+		s_result = "不正解です。";
+		s_resultlist = "<div class='notion'>×&nbsp;" + s_resultlist;
+	}
+	qcnt++;
+
+	//スコア表示
+	showScore();
+	document.getElementById("s_result").innerHTML = s_result;
+	document.getElementById("s_resultlist").innerHTML = s_resultlist;
+
+	//次の問題を表示、または回答終了
+	if (questionList.length!=0){
+		showNewQuestion();
+	} else {
+		alert("全問回答しました");
+		document.getElementById("btn_answer").disabled = true;
+	}
+}
+</script>
+
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<title>児びたい(ちごびたい)　山東京伝</title>
+</head>
+<body>
+	模様の大きさ：<input type="text" size="3" value="50" id="ptnsize">
+	模様の色：<input type="text" size="20" value="maroon" id="ptncolor">
+	地色：<input type="text" size="20" value="seashell" id="groundcolor">
+	<input type="button" id="btnStart" value="開始" onclick="setup();">
+	<input type="button" id="btnStart" value="停止" onclick="status='wait';">
+		→<a href="../common/colorpicker.html" target="wincolorpicker">色見本</a>
+	<br/>
+	<canvas width="600" height="600" id="pbCanvas" style="background-color:white;"></canvas>
+<br/><a href="../index.html">→</a>
+<!--円の組み合わせで描く分銅つなぎ-->
+<script type="text/javascript">
+<!--
+var status='wait';
+var x1,y1,r;
+
+var upsideFlg;
+var fillColor,strkColor;
+
+
+function setup(){
+	clearInterval(intervalId);
+	if (!init()) return;
+	intervalId = setInterval(drawScreen, 200);
+	status='start';
+
+	//模様の大きさと開始位置指定
+	r = parseInt(document.getElementById('ptnsize').value);
+	x1 = 0;
+	y1 = 0;
+
+	fillColor = document.getElementById('groundcolor').value;
+	strkColor = document.getElementById('ptncolor').value;
+
+	//地の塗りつぶし
+	pbCtx.fillStyle = fillColor;
+	pbCtx.fillRect(0, 0, screenWidth, screenHeight);
+
+	//線指定
+	pbCtx.fillStyle = strkColor;
+	pbCtx.strokeStyle = strkColor;
+	pbCtx.lineWidth = 1;
+	upsideFlg = true;
+}
+function drawScreen() {
+	if (status=='wait'){
+		clearInterval(intervalId);
+		return;
+	}
+
+	if (x1>screenWidth){
+		x1 = 0;
+		y1 = y1 + r;
+		upsideFlg = true;
+	}
+	if (y1>screenHeight+r){
+		clearInterval(intervalId);
+		return;
+	}
+
+	drawFace(x1,y1,upsideFlg);
+
+	x1 = x1 +r*1.1;
+	upsideFlg=!upsideFlg;
+}
+//分銅の形を描く
+function drawFace(x,y,isUpside){
+	var ydir = isUpside?1:-1;
+
+	pbCtx.beginPath();
+	pbCtx.moveTo(x1,y1);
+	pbCtx.lineTo(x1-r*0.1,y1+r*ydir);
+	pbCtx.lineTo(x1+r*1.1,y1+r*ydir);
+	pbCtx.lineTo(x1+r,y1);
+	pbCtx.closePath();
+	pbCtx.stroke();
+
+	pbCtx.beginPath();
+	pbCtx.moveTo(x1,y1);
+	pbCtx.lineTo(x1-r*0.04,y1+r*0.4*ydir);
+	pbCtx.quadraticCurveTo(x1+r*0.5, y1+r*0.1*ydir, x1+r*0.5,y1);
+	pbCtx.quadraticCurveTo(x1+r*0.5, y1+r*0.1*ydir, x1+r*1.04,y1+r*0.4*ydir);
+	pbCtx.lineTo(x1+r,y1);
+	pbCtx.closePath();
+	pbCtx.fill();
+
+	pbCtx.beginPath();
+	pbCtx.moveTo(x1-r*0.05,y1+r*0.5*ydir);
+	pbCtx.quadraticCurveTo(x1+r*0.5, y1+r*0.2*ydir, x1+r*0.5,y1+r*0.1*ydir);
+	pbCtx.quadraticCurveTo(x1+r*0.5, y1+r*0.2*ydir, x1+r*1.05,y1+r*0.5*ydir);
+	pbCtx.stroke();
+
+	pbCtx.beginPath();
+	pbCtx.arc(x1+r*0.3,y1+r*0.5*ydir,r*0.1,0,2*Math.PI,true);
+	pbCtx.fill();
+
+	pbCtx.beginPath();
+	pbCtx.arc(x1+r*0.7,y1+r*0.5*ydir,r*0.1,0,2*Math.PI,true);
+	pbCtx.fill();
+
+}
+
+var pbCanvas,pbCtx,screenWidth,screenHeight,intervalId;
+function init() {
+	//描画コンテキストの取得
+	pbCanvas = document.getElementById('pbCanvas');
+	if (!pbCanvas.getContext) return false;
+	pbCtx = pbCanvas.getContext('2d');
+
+	screenWidth = pbCanvas.width;
+	screenHeight = pbCanvas.height;
+	return true;
+}
+//-->
+</script>
+</body>
+</html>
+

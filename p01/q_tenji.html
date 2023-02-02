@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<title>点字読み方クイズ</title>
+<style>
+body{
+  background-color:azure;
+}
+a {
+  color:navy;
+}
+.notion {
+  color:red;
+}
+table.tenji td{
+  margin :10px;
+  border: 1px solid black;
+  border-collapse: collapse;
+  width:45px;
+  line-height:20px;
+  font-size:20px;
+}
+span.tenb::before {
+  content: "●";
+}
+span.tenw::before {
+  content: "　";
+}
+
+</style>
+</head>
+<body>
+<h3>点字読み方クイズ</h3>
+<a href="http://www.braille.jp/_files/00001496/tenji_yonde.pdf" target="braille">点字一覧表【凸面】（日本点字委員会）</a><br/>
+<a href="https://www.nittento.or.jp/about/kids/braille.html" target="nittento">点字のしくみ（日本点字図書館）</a>
+<div id="d_setting">
+文字の種類を選んで、「はじめる」ボタンを押してください
+<br/>
+<p>
+文字の種類：<br/>
+<label><input type="radio" name="qtype" id="r_son" checked>五十音＋っ＋ー</input></label><br/>
+<label><input type="radio" name="qtype" id="r_don">濁音（がぎぐげごなど）</input></label><br/>
+<label><input type="radio" name="qtype" id="r_yon">拗音（きゃきゅきょなど）</input></label><br/>
+<label><input type="radio" name="qtype" id="r_num">数字</input></label><br/>
+<input type="button" id="btn_start" value="はじめる" onclick="showSetting(false);">
+</p>
+</div>
+
+<div id="d_quiz" style="display:none;">
+<span id="quiz_caption"></span>
+<table class="tenji">
+<tr>
+<td>
+<span id="ten1"></span><span id="ten2"></span><br/>
+<span id="ten3"></span><span id="ten4"></span><br/>
+<span id="ten5"></span><span id="ten6"></span></td>
+<td>
+<span id="ten7" ></span><span id="ten8" ></span><br/>
+<span id="ten9" ></span><span id="ten10"></span><br/>
+<span id="ten11"></span><span id="ten12"></span></td>
+</tr>
+</table>
+
+<br/>
+読み方：<input type="text" id="t_answer" size="5">
+<input type="button" id="btn_answer" value="確定" onclick="checkAnswer();"/>
+
+<hr>
+<input type="button" id="btn_clear" value="やり直す" onclick="showSetting(true);"/><br/>
+結果：<span id="s_result"></span><br/>
+合計：<span id="s_summary"></span><br/>
+回答済一覧：<br/>
+<span id="s_resultlist"></span>
+</div>
+
+<hr>
+<a href="../index.html">目次へ</a>
+</body>
+<script src="./data/l_tenji.txt"></script>
+<script>
+let score = 0;
+let qcnt = 0;
+let questionList;
+let rowData;
+
+function showSetting(type) {
+	if (type){
+		document.getElementById("d_setting").style.display="";
+		document.getElementById("d_quiz").style.display="none";
+	} else {
+		if (!initQuestionArea()) return;
+		document.getElementById("d_setting").style.display="none";
+		document.getElementById("d_quiz").style.display="";
+		document.getElementById("t_answer").focus();
+	}
+}
+function initQuestionArea(){
+	let quiz_caption = "下の文字の読み方をひらがなで書いてください";
+
+	//問題リスト設定
+	if (document.getElementById("r_son").checked){
+		questionList = list_son.split('\n');
+	} else if (document.getElementById("r_don").checked){
+		questionList = list_don.split('\n');
+	} else if (document.getElementById("r_yon").checked){ 
+		questionList = list_yon.split('\n');
+	} else if (document.getElementById("r_num").checked){ 
+		questionList = list_snm.split('\n');
+		quiz_caption = "下の文字の読み方を半角数字で書いてください";
+	} else {
+		return false;
+	}
+	if (questionList[0]=="") questionList.splice(0,1);
+	if (questionList[questionList.length-1]=="") questionList.pop();
+
+	//スコア初期化
+	score = 0;
+	qcnt = 0;
+	showScore();
+
+	//回答済み一覧初期化
+	document.getElementById("btn_answer").disabled = false;
+	document.getElementById("s_result").innerHTML = "";
+	document.getElementById("s_resultlist").innerHTML = "";
+
+	document.getElementById("quiz_caption").innerHTML = quiz_caption;
+
+	//問題表示
+	showNewQuestion();
+	return true;
+}
+function showScore() {
+	document.getElementById("s_summary").innerHTML = qcnt + '問中' + score + "問正解";
+}
+function showNewQuestion(){
+	let recno;
+	let now = new Date();
+	let qlen = questionList.length;
+	
+	//ランダムに問題を選択
+	recno = Math.trunc(Math.random() * qlen + now.getMinutes()) % qlen;
+	rowData = questionList[recno].split(",");
+	//回答済み問題をリストから削除
+	questionList.splice(recno,1);
+
+	//問題表示
+	let question = rowData[1] + "000000000000";
+	for (i=1;i<=12;i++){
+		if (question.charAt(i-1)=="1"){
+			document.getElementById("ten" + i).classList.add("tenb");
+			document.getElementById("ten" + i).classList.remove("tenw");
+		} else {
+			document.getElementById("ten" + i).classList.remove("tenb");
+			document.getElementById("ten" + i).classList.add("tenw");
+		}
+	}
+
+	//回答欄クリア
+	document.getElementById("t_answer").value ="";
+	document.getElementById("t_answer").focus();
+}
+function checkAnswer() {
+	let s_resultlist = rowData[0] + "</div>"
+					+ document.getElementById("s_resultlist").innerHTML;
+	let s_result = "";
+
+	if  (document.getElementById("t_answer").value == rowData[0].trim()){
+		s_result = "正解です。";
+		s_resultlist = "<div>○&nbsp;" + s_resultlist;
+		score++;
+	} else {
+		s_result = "不正解です。";
+		s_resultlist = "<div class='notion'>×&nbsp;" + s_resultlist;
+	}
+	qcnt++;
+
+	//スコア表示
+	showScore();
+	document.getElementById("s_result").innerHTML = s_result;
+	document.getElementById("s_resultlist").innerHTML = s_resultlist;
+
+	//次の問題を表示、または回答終了
+	if (questionList.length!=0){
+		showNewQuestion();
+	} else {
+		alert("全問回答しました");
+		document.getElementById("btn_answer").disabled = true;
+	}
+}
+</script>
+
+</html>

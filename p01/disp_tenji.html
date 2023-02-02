@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<title>簡易点訳ツール</title>
+<style>
+body{
+  background-color:azure;
+}
+a {
+  color:navy;
+}
+.notion {
+  color:red;
+  font-weight:bold;
+}
+table.tenji {
+  table-layout: fixed;
+}
+table.tenji td{
+  margin :10px;
+  border: 1px solid black;
+  border-collapse: collapse;
+  width:45px;
+  line-height:20px;
+  font-size:20px;
+}
+span.tenb::before {
+  content: "●";
+}
+span.tenw::before {
+  content: "　";
+}
+</style>
+</head>
+<body>
+<h3>簡易点訳ツール</h3>
+
+6文字までの単語をひらがなで入力して、変換を押してください<br/>
+<br/>
+<input type="text" id="t_sumiji" size="8" maxlength="6">
+<input type="button" id="btn_braille" value="変換" onclick="toBraille();"/>
+<br/>
+<br/>
+
+<table class="tenji">
+<tr>
+<td><span id="ten1_1"></span><span id="ten2_1"></span><br/><span id="ten3_1"></span><span id="ten4_1"></span><br/><span id="ten5_1"></span><span id="ten6_1"></span></td>
+<td><span id="ten1_2"></span><span id="ten2_2"></span><br/><span id="ten3_2"></span><span id="ten4_2"></span><br/><span id="ten5_2"></span><span id="ten6_2"></span></td>
+<td><span id="ten1_3"></span><span id="ten2_3"></span><br/><span id="ten3_3"></span><span id="ten4_3"></span><br/><span id="ten5_3"></span><span id="ten6_3"></span></td>
+<td><span id="ten1_4"></span><span id="ten2_4"></span><br/><span id="ten3_4"></span><span id="ten4_4"></span><br/><span id="ten5_4"></span><span id="ten6_4"></span></td>
+<td><span id="ten1_5"></span><span id="ten2_5"></span><br/><span id="ten3_5"></span><span id="ten4_5"></span><br/><span id="ten5_5"></span><span id="ten6_5"></span></td>
+<td><span id="ten1_6"></span><span id="ten2_6"></span><br/><span id="ten3_6"></span><span id="ten4_6"></span><br/><span id="ten5_6"></span><span id="ten6_6"></span></td>
+<td><span id="ten1_7"></span><span id="ten2_7"></span><br/><span id="ten3_7"></span><span id="ten4_7"></span><br/><span id="ten5_7"></span><span id="ten6_7"></span></td>
+<td><span id="ten1_8"></span><span id="ten2_8"></span><br/><span id="ten3_8"></span><span id="ten4_8"></span><br/><span id="ten5_8"></span><span id="ten6_8"></span></td>
+<td><span id="ten1_9"></span><span id="ten2_9"></span><br/><span id="ten3_9"></span><span id="ten4_9"></span><br/><span id="ten5_9"></span><span id="ten6_9"></span></td>
+<td><span id="ten1_10"></span><span id="ten2_10"></span><br/><span id="ten3_10"></span><span id="ten4_10"></span><br/><span id="ten5_10"></span><span id="ten6_10"></span></td>
+<td><span id="ten1_11"></span><span id="ten2_11"></span><br/><span id="ten3_11"></span><span id="ten4_11"></span><br/><span id="ten5_11"></span><span id="ten6_11"></span></td>
+<td><span id="ten1_12"></span><span id="ten2_12"></span><br/><span id="ten3_12"></span><span id="ten4_12"></span><br/><span id="ten5_12"></span><span id="ten6_12"></span></td>
+</table>
+<br/>
+<hr>
+<div class="notion">
+《注意》<br/>
+このツールの点訳は、まちがった点訳になることがあります。<br/>
+「点字表記を何となく知りたい」くらいの用途でお使いください。<br/>
+</div>
+
+<br/>
+以下の点訳ルールには対応していません。<br/>
+・単語間のマス開けルール<br/>
+・助詞「は」を「ワ」、「へ」を「エ」と書くルール<br/>
+<br/>
+また、ウ列、オ列の母音＋「う」を、ウ列、オ列の母音＋「ー」と書くルールには対応していますが、<br/>
+ウ列、オ列の母音＋「う」で始まる単語の場合にまちがった点訳になります。<br/>
+例）<br/>
+「こうし」→このツールでの点訳「コーシ」<br/>
+※「格子」「講師」の点訳は「コーシ」でOKですが、<br/>
+　「子牛」は「コウシ」となるのが本来の正しい点訳です。<br/>
+<br/>
+参考）<br/>
+<a href="http://www.braille.jp/_files/00001496/tenji_yonde.pdf" target="braille">点字一覧表【凸面】（日本点字委員会）</a><br/>
+<a href="https://www.nittento.or.jp/about/kids/braille.html" target="nittento">点字のしくみ（日本点字図書館）</a><br/>
+
+<hr>
+<a href="../index.html">目次へ</a>
+</body>
+<script src="./data/l_tenji.txt"></script>
+<script>
+let singleList;
+let doubleList;
+
+function init(){
+
+	//文字リスト設定
+	singleList = list_son.split('\n');
+	singleList = singleList.concat(list_don.split('\n'));
+	singleList = singleList.concat(list_ton2.split('\n'));
+
+	doubleList = list_yon.split('\n');
+	doubleList = doubleList.concat(list_ton.split('\n'));
+
+	if (singleList[0]=="") singleList.splice(0,1);
+	if (singleList[singleList.length-1]=="") singleList.pop();
+	if (doubleList[0]=="") doubleList.splice(0,1);
+	if (doubleList[doubleList.length-1]=="") doubleList.pop();
+
+	//点字部クリア
+	clearBraille();
+
+	document.getElementById("t_sumiji").focus();
+}
+function clearBraille(){
+	//点字部クリア
+	for (i=1;i<=10;i++){
+		for (j=1;j<=6;j++){
+			document.getElementById("ten" + j + "_" + i).classList.remove("tenb");
+			document.getElementById("ten" + j + "_" + i).classList.add("tenw");
+		}
+	}
+
+}
+function toBraille() {
+	let bcnt = 0;
+	let orgText = document.getElementById("t_sumiji").value;
+	let chkchar, rowdata;
+
+	//点字部クリア
+	clearBraille();
+
+	//
+	for (i=0;i<orgText.length;i++){
+		chkchar = orgText.charAt(i);
+		if (i>0 && chkchar=="う" && 
+			"おくこすそつとのふほもゆよろぐごずぞづどぶぼぷぽゅょ".indexOf(orgText.charAt(i-1))>=0){
+			//ウ列オ列＋「う」は「ー」とみなす
+			chkchar = "ー";
+		}
+		if (i < orgText.length -1 &&
+			"ゃゅょぁぃぅぇぉ".indexOf(orgText.charAt(i+1)) >= 0){
+			//次の文字が小文字の場合、2文字で判定
+			chkchar += orgText.charAt(i+1);
+			i++;
+		}
+
+		//文字リストにて探す
+		rowdata="";
+		if (chkchar.length == 1){
+			//1文字
+			for (j=0;j<singleList.length;j++){
+				if (singleList[j].indexOf(chkchar+",")==0){
+					rowdata = singleList[j].substring(2);
+					break;
+				}
+			}
+		} else {
+			//2文字
+			for (j=0;j<doubleList.length;j++){
+				if (doubleList[j].indexOf(chkchar+",")==0){
+					rowdata = doubleList[j].substring(3);
+					break;
+				}
+			}
+		}
+
+		if (rowdata!=""){
+			while (rowdata.length>0){
+				//点字部表示
+				bcnt++;
+				for (j=1;j<=6;j++){
+					if (rowdata.charAt(j-1)=="1"){
+						document.getElementById("ten" + j + "_" + bcnt).classList.add("tenb");
+						document.getElementById("ten" + j + "_" + bcnt).classList.remove("tenw");
+					} else {
+						document.getElementById("ten" + j + "_" + bcnt).classList.remove("tenb");
+						document.getElementById("ten" + j + "_" + bcnt).classList.add("tenw");
+					}
+				}
+				rowdata = rowdata.substring(6);
+			}
+		}
+	}
+}
+init();
+</script>
+
+</html>
