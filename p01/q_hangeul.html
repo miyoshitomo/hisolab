@@ -13,6 +13,10 @@ a {
 .notion {
   color:red;
 }
+div.dgroup{
+	display: flex;
+	flex-flow :column wrap;
+}
 </style>
 </head>
 <body>
@@ -22,10 +26,15 @@ a {
 文字の種類を選んで、「はじめる」ボタンを押してください
 <br/>
 <p>
-文字の種類：<br/>
-<label><input type="radio" name="qtype" id="r_bin" checked>母音</input></label><br/>
-<label><input type="radio" name="qtype" id="r_sin">子音</input></label><br/>
-<label><input type="radio" name="qtype" id="r_ptm">パッチム</input></label><br/>
+<div class="dgroup">
+文字の種類：
+<label><input type="radio" name="qtype" id="r_bin" checked>母音</input></label>
+<label><input type="radio" name="qtype" id="r_sin">子音</input></label>
+<label><input type="radio" name="qtype" id="r_ptm">パッチム</input></label>
+</div>
+<br/>
+<label><input type="checkbox" id="needTimer">タイマーつき</input></label><br/>
+<br/>
 <input type="button" id="btn_start" value="はじめる" onclick="showSetting(false);">
 </p>
 </div>
@@ -39,6 +48,7 @@ a {
 
 <hr>
 <input type="button" id="btn_clear" value="やり直す" onclick="showSetting(true);"/><br/>
+<span id="timerArea">経過時間：<span id="s_second"></span>秒<br/></span>
 結果：<span id="s_result"></span><br/>
 合計：<span id="s_summary"></span><br/>
 回答済一覧：<br/>
@@ -52,13 +62,14 @@ a {
 <script>
 let score = 0;
 let qcnt = 0;
-let questionList;
-let rowData;
+let questionList,rowData;
+let intervalId, second;
 
 function showSetting(type) {
 	if (type){
 		document.getElementById("d_setting").style.display="";
 		document.getElementById("d_quiz").style.display="none";
+		clearInterval(intervalId);
 	} else {
 		if (!initQuestionArea()) return;
 		document.getElementById("d_setting").style.display="none";
@@ -92,6 +103,21 @@ function initQuestionArea(){
 
 	//問題表示
 	showNewQuestion();
+
+	//タイマー表示
+	if (document.getElementById("needTimer").checked){
+		document.getElementById("timerArea").style.display="";
+		clearInterval(intervalId);
+		second=0;
+		document.getElementById("s_second").innerHTML = second;
+		intervalId = setInterval(function(){
+			second++;
+			document.getElementById("s_second").innerHTML = second;
+		}, 1000);
+	} else {
+		document.getElementById("timerArea").style.display="none";
+	}
+
 	return true;
 }
 function showScore() {
@@ -137,6 +163,7 @@ function checkAnswer() {
 	if (questionList.length!=0){
 		showNewQuestion();
 	} else {
+		clearInterval(intervalId);
 		alert("全問回答しました");
 		document.getElementById("btn_answer").disabled = true;
 	}
