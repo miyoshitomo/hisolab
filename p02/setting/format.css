@@ -1,7 +1,7 @@
 body {	background-color:#fffff0;
 	color:#10009d;
 	font-size:15px;
-	font-family:"MS P–¾’©","•½¬–¾’©","–¾’©";
+	font-family:"MS Pæ˜æœ","å¹³æˆæ˜æœ","æ˜æœ";
 	margin-left:40px;
 	margin-right:30px;
 	letter-spacing:1px;
@@ -15,25 +15,13 @@ body.index{
 	margin-left:20px;
 	text-align:center;
 }
-body.storia{
-	text-align:center;
-}
-body.guida{
-	margin-left:30px;
-	margin-right:30px;
-}
-body.sansaku{
-	margin-left:50px;
-	margin-left:50px;
-	color:#10009d;
-}
 th{
 	background-color:#10009d;
 	color:#ffffff;
 }
 table {
 	font-size:15px;
-	font-family:"MS P–¾’©","•½¬–¾’©";
+	font-family:"MS Pæ˜æœ","å¹³æˆæ˜æœ";
 }
 
 
